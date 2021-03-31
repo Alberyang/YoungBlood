@@ -1,6 +1,5 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -14,20 +13,21 @@ import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ShareIcon from "@material-ui/icons/Share";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MessageIcon from "@material-ui/icons/Message";
+import Gallery from "react-grid-gallery";
 
 import CommentCard from "./CommentCard";
 import CommentBox from "./CommentBox";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "70%",
+    width: "90%",
     marginTop: "20px",
   },
-  media: {
-    height: 0,
-    paddingTop: "56.25%", // 16:9
+  moment_img: {
+    margin: "0 20px",
+    height: "200px",
+    width: "auto",
   },
   expand: {
     transform: "rotate(0deg)",
@@ -44,13 +44,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function RecipeReviewCard() {
+export default function MomentCard(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const photodata = props.moment.pic_src.map(getPhoto);
+
+  function getPhoto(url) {
+    return {
+      src: require("../../../img/test-img/" + url),
+      thumbnail: require("../../../img/test-img/" + url),
+      thumbnailWidth: "auto",
+      thumbnailHeight: 150,
+    };
+  }
 
   return (
     <Card className={classes.root}>
@@ -61,22 +72,17 @@ export default function RecipeReviewCard() {
             R
           </Avatar>
         }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
+        title={props.moment.user}
+        subheader={props.moment.time}
       />
       <CardContent align="left">
         <Typography variant="body2" color="textSecondary" component="p">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the
-          mussels, if you like.
+          {props.moment.contents}
         </Typography>
       </CardContent>
-      <CardMedia
-        className={classes.media}
-        image="/static/images/cards/paella.jpg"
-        title="Paella dish"
-      />
-
+      <CardMedia className={classes.moment_img}>
+        <Gallery images={photodata} />
+      </CardMedia>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
           <FavoriteIcon />
@@ -96,10 +102,15 @@ export default function RecipeReviewCard() {
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <CommentCard />
-          <Divider variant="middle" />
-          <CommentCard />
-          <Divider variant="middle" />
+          {props.moment.comments.map((comment, index) => {
+            return (
+              <React.Fragment key={index}>
+                <CommentCard comment={comment} />
+                <Divider variant="middle" />
+              </React.Fragment>
+            );
+          })}
+
           <CommentBox />
         </CardContent>
       </Collapse>

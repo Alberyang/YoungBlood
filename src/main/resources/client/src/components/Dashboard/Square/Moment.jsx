@@ -1,10 +1,8 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
-import ReactDOM from "react-dom";
-import axios from "../../../helpers/axiosConfig";
 import withStyles from "@material-ui/core/styles/withStyles";
-import { Link, withRouter } from "react-router-dom";
-import Grid from "@material-ui/core/Grid";
+import { withRouter } from "react-router-dom";
+
 import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -29,6 +27,30 @@ const styles = (theme) => ({
 class Moment extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      moments: [
+        {
+          user: "Yichao Xu1",
+          time: "2021-03-20 18:00",
+          contents: "我惠天下第一~",
+          comments: [
+            { user: "Yichao Xu2", time: "2021-03-20 19:00", contents: "赞同" },
+            { user: "Yichao Xu3", time: "2021-03-21 20:00", contents: "+1" },
+          ],
+          pic_src: ["1.jpg"],
+        },
+        {
+          user: "Yichao Xu2",
+          time: "2021-03-30 19:00",
+          contents: "我惠美如画中仙",
+          comments: [
+            { user: "Yichao Xu2", time: "2021-03-31 19:00", contents: "赞同" },
+            { user: "Yichao Xu3", time: "2021-03-31 20:00", contents: "+1" },
+          ],
+          pic_src: ["1.jpg", "2.jpg"],
+        },
+      ],
+    };
   }
   render() {
     const { classes } = this.props;
@@ -44,8 +66,9 @@ class Moment extends Component {
         <MomentBox />
         <Card className={classes.moments}>
           <CardContent>
-            <MomentCard />
-            <MomentCard />
+            {this.state.moments.map((item, index) => (
+              <MomentCard key={index} moment={item} />
+            ))}
           </CardContent>
         </Card>
       </div>

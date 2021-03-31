@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CommentCard() {
+export default function CommentCard(props) {
   const classes = useStyles();
 
   return (
@@ -31,14 +31,12 @@ export default function CommentCard() {
             R
           </Avatar>
         }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
+        title={props.comment.user}
+        subheader={props.comment.time}
       />
       <CardContent align="left">
         <Typography variant="body2" color="textSecondary" component="p">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the
-          mussels, if you like.
+          {props.comment.contents}
         </Typography>
       </CardContent>
     </Card>
