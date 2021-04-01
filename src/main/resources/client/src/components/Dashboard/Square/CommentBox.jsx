@@ -8,6 +8,9 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
+import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
+import Collapse from "@material-ui/core/Collapse";
+import EmojiPicker from "./Emoji";
 
 const styles = {
   box_card: {
@@ -18,6 +21,9 @@ const styles = {
     marginTop: "20px",
     width: "100%",
   },
+  emoji_btn: {
+    marginRight: "auto",
+  },
   box_submitbtn: {
     textTransform: "none",
     marginLeft: "auto",
@@ -25,16 +31,36 @@ const styles = {
 };
 
 class CommentBox extends Component {
+  constructor() {
+    super();
+    this.state = {
+      expanded: false,
+      textArea: undefined,
+    };
+    this.divRerf = React.createRef();
+  }
+  handleExpandClick = () => {
+    this.setState({
+      expanded: !this.state.expanded,
+    });
+  };
+  componentDidMount() {
+    const node = this.divRerf.current;
+    this.setState({
+      textArea: node,
+    });
+  }
   render() {
     const { classes } = this.props;
     return (
-      <div align="center">
+      <div align="center" style={{ position: "relative" }}>
         <Card
           className={classes.box_card}
           style={{ border: "none", boxShadow: "none" }}
         >
           <CardContent>
             <TextField
+              inputRef={this.divRerf}
               className={classes.box_textarea}
               id="outlined-textarea"
               rows={5}
@@ -45,6 +71,14 @@ class CommentBox extends Component {
             />
           </CardContent>
           <CardActions>
+            <IconButton
+              aria-label="insert a emoji"
+              className={classes.emoji_btn}
+              onClick={this.handleExpandClick}
+              aria-expanded={this.state.expanded}
+            >
+              <EmojiEmotionsIcon />
+            </IconButton>
             <Button
               className={classes.box_submitbtn}
               variant="contained"
@@ -52,6 +86,31 @@ class CommentBox extends Component {
             >
               Comment
             </Button>
+            <Collapse
+              in={this.state.expanded}
+              style={{
+                position: "absolute",
+                zIndex: "2",
+                left: "15%",
+                bottom: "0",
+              }}
+            >
+              <EmojiPicker node={this.state.textArea} />
+              <button
+                style={{
+                  position: "absolute",
+                  zIndex: "3",
+                  top: "0px",
+                  right: "0px",
+                  background: "transparent",
+                  border: "none",
+                  fontSize: "3px",
+                }}
+                onClick={this.handleExpandClick}
+              >
+                x
+              </button>
+            </Collapse>
           </CardActions>
         </Card>
       </div>

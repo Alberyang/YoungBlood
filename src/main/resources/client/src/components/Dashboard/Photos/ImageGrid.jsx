@@ -1,13 +1,13 @@
-import React, {Component, Fragment} from 'react';
-import withStyles from '@material-ui/core/styles/withStyles';
-import Gallery from 'react-grid-gallery';
-import {fetchPhotos, deletePhoto} from '../../../actions/photoAction';
-import {connect} from 'react-redux';
-import Alert from '@material-ui/lab/Alert';
-import {CircularProgress} from '@material-ui/core';
-import Snackbar from '@material-ui/core/Snackbar';
-import {withRouter} from 'react-router-dom';
-import Grid from '@material-ui/core/Grid';
+import React, { Component, Fragment } from "react";
+import withStyles from "@material-ui/core/styles/withStyles";
+import Gallery from "react-grid-gallery";
+import { fetchPhotos, deletePhoto } from "../../../actions/photoAction";
+import { connect } from "react-redux";
+import Alert from "@material-ui/lab/Alert";
+import { CircularProgress } from "@material-ui/core";
+import Snackbar from "@material-ui/core/Snackbar";
+import { withRouter } from "react-router-dom";
+import Grid from "@material-ui/core/Grid";
 
 const styles = (theme) => ({
   root: {
@@ -40,11 +40,11 @@ class ImageGrid extends Component {
       this.props.dispatch(
         deletePhoto(this.props.photo.photos[this.state.currentImage]._id)
       );
-      this.setState({delete: true});
+      this.setState({ delete: true });
     }
   }
   onCurrentImageChange(index) {
-    this.setState({currentImage: index});
+    this.setState({ currentImage: index });
   }
 
   componentDidMount() {
@@ -66,13 +66,13 @@ class ImageGrid extends Component {
     }
   }
   handleClose = (event, reason) => {
-    if (reason === 'clickaway') return;
-    this.setState({open: false, delete: false});
+    if (reason === "clickaway") return;
+    this.setState({ open: false, delete: false });
   };
 
   render() {
-    const {classes} = this.props;
-    const {error, isFetching, photos} = this.props.photo;
+    const { classes } = this.props;
+    const { error, isFetching, photos } = this.props.photo;
     console.log(this.props);
 
     let content;
@@ -92,9 +92,13 @@ class ImageGrid extends Component {
 
       function getPhoto(elem) {
         return {
-          src: '/api/image/' + elem.filename,
-          thumbnail: '/api/image/' + elem.filename,
-          thumbnailWidth: 'auto',
+          src:
+            "https://comp30022-microhard.herokuapp.com/api/image/" +
+            elem.filename,
+          thumbnail:
+            "https://comp30022-microhard.herokuapp.com/api/image/" +
+            elem.filename,
+          thumbnailWidth: "auto",
           thumbnailHeight: 250,
           thumbnailCaption: elem.caption,
           caption: elem.caption,
@@ -104,14 +108,14 @@ class ImageGrid extends Component {
       let photogrid = (
         <div
           style={{
-            display: 'block',
-            minHeight: '1px',
-            width: '100%',
-            border: '1px solid #ddd',
-            overflow: 'auto',
-            fontFamily: 'Nunito, Lato, sans-serif',
-            textAlign: 'center',
-            background: 'white',
+            display: "block",
+            minHeight: "1px",
+            width: "100%",
+            border: "1px solid #ddd",
+            overflow: "auto",
+            fontFamily: "Nunito, Lato, sans-serif",
+            textAlign: "center",
+            background: "white",
           }}
         >
           <Gallery

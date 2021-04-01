@@ -9,6 +9,8 @@ import CardContent from "@material-ui/core/CardContent";
 
 import MomentBox from "./MomentBox";
 import MomentCard from "./MomentCard";
+import EmojiPicker from "./Emoji";
+import Posts from "./test.jsx";
 
 const styles = (theme) => ({
   section: {
@@ -42,7 +44,7 @@ class Moment extends Component {
         {
           user: "Yichao Xu2",
           time: "2021-03-30 19:00",
-          contents: "我惠美如画中仙",
+          contents: "惠惠惠惠惠",
           comments: [
             { user: "Yichao Xu2", time: "2021-03-31 19:00", contents: "赞同" },
             { user: "Yichao Xu3", time: "2021-03-31 20:00", contents: "+1" },
@@ -65,7 +67,7 @@ class Moment extends Component {
         </div>
         <MomentBox />
         <Card className={classes.moments}>
-          <CardContent>
+          <CardContent id="moment_card">
             {this.state.moments.map((item, index) => (
               <MomentCard key={index} moment={item} />
             ))}

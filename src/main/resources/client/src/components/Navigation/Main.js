@@ -32,6 +32,8 @@ import ViewProjectItem from "../View/ViewProjectItem";
 
 // Import Square page
 import Square from "../Dashboard/Square/Moment";
+// Import Chat page
+import Chat from "../Dashboard/Chat/Chat";
 
 class Main extends Component {
   render() {
@@ -110,6 +112,14 @@ class Main extends Component {
           exact
           path="/square"
           component={Square}
+          authed={this.props.user}
+        />
+
+        {/* New Code for chat */}
+        <PrivateRoute
+          exact
+          path="/chat"
+          component={Chat}
           authed={this.props.user}
         />
 

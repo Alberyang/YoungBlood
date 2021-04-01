@@ -1,61 +1,66 @@
-import React, {Component, Fragment, useState} from 'react';
-import {Helmet} from 'react-helmet';
-import {withStyles} from '@material-ui/core/styles';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import Typography from '@material-ui/core/Typography';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {CircularProgress, Grid} from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import {Formik, Field, Form} from 'formik';
+import React, { Component, Fragment, useState } from "react";
+import { Helmet } from "react-helmet";
+import { withStyles } from "@material-ui/core/styles";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import Typography from "@material-ui/core/Typography";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { CircularProgress, Grid } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Backdrop from "@material-ui/core/Backdrop";
+import Fade from "@material-ui/core/Fade";
+import { Formik, Field, Form } from "formik";
 
-import Divider from '@material-ui/core/Divider';
-import AccordionActions from '@material-ui/core/AccordionActions';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogActions from '@material-ui/core/DialogActions';
-import Dialog from '@material-ui/core/Dialog';
-import {fullWidth} from 'validator/es/lib/isFullWidth';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Radio from '@material-ui/core/Radio';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
+import Divider from "@material-ui/core/Divider";
+import AccordionActions from "@material-ui/core/AccordionActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogActions from "@material-ui/core/DialogActions";
+import Dialog from "@material-ui/core/Dialog";
+import { fullWidth } from "validator/es/lib/isFullWidth";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import Radio from "@material-ui/core/Radio";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormLabel from "@material-ui/core/FormLabel";
 
-import {editExperience, postExperience, fetchExperiences, deleteExperience} from '../../actions/experienceAction';
-import {connect} from 'react-redux';
-import Alert from '@material-ui/lab/Alert';
+import {
+  editExperience,
+  postExperience,
+  fetchExperiences,
+  deleteExperience,
+} from "../../actions/experienceAction";
+import { connect } from "react-redux";
+import Alert from "@material-ui/lab/Alert";
 
 const useStyles2 = (theme) => ({
   root: {
-    backgroundColor: '#094183',
-    paddingBottom: '0px',
-    color: '#fff',
+    backgroundColor: "#094183",
+    paddingBottom: "0px",
+    color: "#fff",
   },
   progress: {
     marginTop: theme.spacing(2),
-    marginBottom:theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
 });
 
 //Form used to create and edit experiences
 function MyForm(props) {
   //Set initial values for values that need to be parsed differently if undefined
-  let initialState = 'going';
+  let initialState = "going";
   if (props.state !== undefined) {
     initialState = props.state;
   }
-  let initialStartDate = '';
-  if(props.start_date !== undefined) {
-    initialStartDate = props.start_date.substring(0,10);
+  let initialStartDate = "";
+  if (props.start_date !== undefined) {
+    initialStartDate = props.start_date.substring(0, 10);
   }
-  let initialEndDate = '';
-  if(props.end_date !== undefined) {
-    initialEndDate = props.end_date.substring(0,10);
+  let initialEndDate = "";
+  if (props.end_date !== undefined) {
+    initialEndDate = props.end_date.substring(0, 10);
   }
   return (
     <Dialog
@@ -98,7 +103,7 @@ function MyForm(props) {
                   id="start_date"
                   name="start_date"
                   label="Start date"
-                  InputLabelProps={{shrink: true}}
+                  InputLabelProps={{ shrink: true }}
                   fullWidth
                   required
                 />
@@ -111,7 +116,7 @@ function MyForm(props) {
                   name="end_date"
                   id="end_date"
                   type="date"
-                  InputLabelProps={{shrink: true}}
+                  InputLabelProps={{ shrink: true }}
                   fullWidth
                   required
                 />
@@ -168,7 +173,7 @@ function MyForm(props) {
 }
 
 //Specialised button used in MyForm
-const RadioButton = ({field, ...props}) => {
+const RadioButton = ({ field, ...props }) => {
   return (
     <RadioGroup
       {...field}
@@ -282,7 +287,7 @@ class MyAccordion extends Component {
             <Grid Item>
               <Typography variant="subtitle1">
                 {this.props.start_date &&
-                  this.props.start_date.substring(0, 10)}{' '}
+                  this.props.start_date.substring(0, 10)}{" "}
                 - {this.props.end_date.substring(0, 10)}
               </Typography>
             </Grid>
@@ -313,23 +318,22 @@ const DisplayItems = (items) => {
   let i = 0;
   let j = 0;
   items.forEach((item) => {
-    if (item.props.state === 'going') {
+    if (item.props.state === "going") {
       current[i] = item;
       i++;
-    }
-    else {
+    } else {
       past[j] = item;
       j++;
     }
   });
   return (
     <div>
-      <Typography variant='h3'>Current Experience</Typography>
-      <br/>
+      <Typography variant="h3">Current Experience</Typography>
+      <br />
       {current}
       <br />
-      <Typography variant='h3'>Past Experience</Typography>
-      <br/>
+      <Typography variant="h3">Past Experience</Typography>
+      <br />
       {past}
     </div>
   );
@@ -347,22 +351,22 @@ class Experience extends Component {
     this.update = this.update.bind(this);
     this.state = {
       open: null,
-    }
+    };
   }
 
   handleClick() {
-    this.setState({open:true})
+    this.setState({ open: true });
   }
   handleClose() {
-    this.setState({open:false})
+    this.setState({ open: false });
   }
 
   createExperience(values) {
     this.props.dispatch(postExperience(values));
-  };
+  }
 
   deleteExperience(_id) {
-    this.props.dispatch(deleteExperience(_id))
+    this.props.dispatch(deleteExperience(_id));
   }
 
   update() {
@@ -374,13 +378,13 @@ class Experience extends Component {
   }
 
   editExperience(_id, values) {
-    this.props.dispatch(editExperience(_id, values))
+    this.props.dispatch(editExperience(_id, values));
   }
 
   render() {
-    const {classes} = this.props;
+    const { classes } = this.props;
     let content;
-    const {error, isFetching, experiences} = this.props.experience;
+    const { error, isFetching, experiences } = this.props.experience;
 
     if (error) {
       content = <Alert severity="error">{error}</Alert>;
@@ -394,9 +398,7 @@ class Experience extends Component {
     } else if (!experiences) {
       content = (
         <Grid container justify="center" alignItems="center">
-          <Typography>
-            No experience found
-          </Typography>
+          <Typography>No experience found</Typography>
         </Grid>
       );
     } else {
@@ -404,26 +406,27 @@ class Experience extends Component {
       let i = 0;
       let experienceObj = experiences.map((item) => {
         experienceArray[i] = {};
-          Object.entries(item).map(([key, value]) => {
-            experienceArray[i][key] = value;
-          });
-          return (
-            <MyAccordion
-              _id={experienceArray[i]._id}
-              key={experienceArray[i]._id}
-              position={experienceArray[i].position}
-              description={experienceArray[i].description}
-              start_date={experienceArray[i].start_date}
-              state={experienceArray[i].state}
-              company={experienceArray[i].company}
-              end_date={experienceArray[i++].end_date}
-              update={this.update}
-              delete={this.deleteExperience}
-              edit={this.editExperience}
-            />
-          );
-      })
-      content = DisplayItems(experienceObj)
+        Object.entries(item).map(([key, value]) => {
+          experienceArray[i][key] = value;
+          return undefined;
+        });
+        return (
+          <MyAccordion
+            _id={experienceArray[i]._id}
+            key={experienceArray[i]._id}
+            position={experienceArray[i].position}
+            description={experienceArray[i].description}
+            start_date={experienceArray[i].start_date}
+            state={experienceArray[i].state}
+            company={experienceArray[i].company}
+            end_date={experienceArray[i++].end_date}
+            update={this.update}
+            delete={this.deleteExperience}
+            edit={this.editExperience}
+          />
+        );
+      });
+      content = DisplayItems(experienceObj);
     }
 
     return (
@@ -432,10 +435,10 @@ class Experience extends Component {
           <title>Microhard &middot; Experience </title>
         </Helmet>
 
-        <div style={{height: '120px', backgroundColor: '#094183'}}>
+        <div style={{ height: "120px", backgroundColor: "#094183" }}>
           <br />
           <br />
-          <Typography variant="h1" align="center" style={{color: '#fff'}}>
+          <Typography variant="h1" align="center" style={{ color: "#fff" }}>
             Career Experience
           </Typography>
         </div>
@@ -443,7 +446,11 @@ class Experience extends Component {
         <br />
         <Grid container justify="center" direction="row" spacing="3">
           <Grid item xs={12} sm={2}>
-            <Button variant="contained" color="primary" onClick={this.handleClick}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleClick}
+            >
               Add new Experience
             </Button>
           </Grid>
@@ -463,7 +470,6 @@ class Experience extends Component {
     );
   }
 }
-
 
 const mapStateToProps = (state) => ({
   ...state,

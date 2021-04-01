@@ -179,6 +179,13 @@ class PrimaryNav extends Component {
                 </Link>
               </ListItem>
 
+              {/* New code for chat */}
+              <ListItem key={11} button divider>
+                <Link to="/chat" className={classes.noDecoration}>
+                  <Button className={classes.button}>Chat</Button>
+                </Link>
+              </ListItem>
+
               <ListItem key={7} button divider>
                 <MenuItem component={Link} to="/account">
                   Account
@@ -229,6 +236,11 @@ class PrimaryNav extends Component {
             {/* New code for square */}
             <Link to="/square" className={classes.noDecoration}>
               <Button className={classes.button}>Square</Button>
+            </Link>
+
+            {/* New code for chat */}
+            <Link to="/chat" className={classes.noDecoration}>
+              <Button className={classes.button}>Chat</Button>
             </Link>
           </div>
 

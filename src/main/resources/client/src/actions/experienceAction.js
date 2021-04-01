@@ -1,6 +1,5 @@
-import {createActions} from 'redux-actions';
-import axios from '../helpers/axiosConfig';
-import {push} from 'connected-react-router';
+import { createActions } from "redux-actions";
+import axios from "../helpers/axiosConfig";
 
 export const {
   fetchExperiencesStarted,
@@ -17,19 +16,19 @@ export const {
   updateExperienceFailure,
 } = createActions(
   {
-    FETCH_EXPERIENCES_SUCCESS: (data) => ({data}),
-    FETCH_EXPERIENCES_FAILURE: (error) => ({error}),
-    POST_EXPERIENCE_SUCCESS: (data) => ({data}),
-    POST_EXPERIENCE_FAILURE: (error) => ({error}),
-    UPDATE_EXPERIENCE_SUCCESS: (data) => ({data}),
-    UPDATE_EXPERIENCE_FAILURE: (error) => ({error}),
-    DELETE_EXPERIENCE_SUCCESS: (data) => ({data}),
-    DELETE_EXPERIENCE_FAILURE: (error) => ({error})
+    FETCH_EXPERIENCES_SUCCESS: (data) => ({ data }),
+    FETCH_EXPERIENCES_FAILURE: (error) => ({ error }),
+    POST_EXPERIENCE_SUCCESS: (data) => ({ data }),
+    POST_EXPERIENCE_FAILURE: (error) => ({ error }),
+    UPDATE_EXPERIENCE_SUCCESS: (data) => ({ data }),
+    UPDATE_EXPERIENCE_FAILURE: (error) => ({ error }),
+    DELETE_EXPERIENCE_SUCCESS: (data) => ({ data }),
+    DELETE_EXPERIENCE_FAILURE: (error) => ({ error }),
   },
-  'FETCH_EXPERIENCES_STARTED',
-  'POST_EXPERIENCE_STARTED',
-  'DELETE_EXPERIENCE_STARTED',
-  'UPDATE_EXPERIENCE_STARTED'
+  "FETCH_EXPERIENCES_STARTED",
+  "POST_EXPERIENCE_STARTED",
+  "DELETE_EXPERIENCE_STARTED",
+  "UPDATE_EXPERIENCE_STARTED"
 );
 
 export const fetchExperiences = () => {
@@ -40,7 +39,7 @@ export const fetchExperiences = () => {
       const response = await axios.get(`/experience`);
       dispatch(fetchExperiencesSuccess(response.data));
     } catch (error) {
-      dispatch(fetchExperiencesFailure('Could not retrieve experiences.'));
+      dispatch(fetchExperiencesFailure("Could not retrieve experiences."));
     }
   };
 };
@@ -54,7 +53,7 @@ export const deleteExperience = (id) => {
       dispatch(deleteExperienceSuccess(id));
       //dispatch(push('/experience'));
     } catch (error) {
-      dispatch(deleteExperienceFailure('Could not delete experience.'));
+      dispatch(deleteExperienceFailure("Could not delete experience."));
     }
   };
 };
@@ -64,10 +63,10 @@ export const postExperience = (data) => {
     dispatch(postExperienceStarted());
 
     try {
-      const response = await axios.post('/experience/create', data);
+      const response = await axios.post("/experience/create", data);
       dispatch(postExperienceSuccess(response.data));
     } catch (error) {
-      dispatch(postExperienceFailure('Could not create experience.'));
+      dispatch(postExperienceFailure("Could not create experience."));
     }
   };
 };
@@ -80,10 +79,7 @@ export const editExperience = (id, data) => {
       const response = await axios.post(`/experience/update/${id}`, data);
       dispatch(updateExperienceSuccess(response.data));
     } catch (error) {
-      dispatch(updateExperienceFailure('Could not update experience.'));
+      dispatch(updateExperienceFailure("Could not update experience."));
     }
   };
 };
-
-
-

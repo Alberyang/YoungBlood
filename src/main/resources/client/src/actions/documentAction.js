@@ -1,7 +1,6 @@
-import { createActions } from 'redux-actions';
-import axios from '../helpers/axiosConfig';
-import { push } from 'connected-react-router';
-import {deletePhotoSuccess} from './photoAction';
+import { createActions } from "redux-actions";
+import axios from "../helpers/axiosConfig";
+import { push } from "connected-react-router";
 
 export const {
   fetchDocumentsStarted,
@@ -32,11 +31,11 @@ export const {
     DELETE_DOCUMENT_SUCCESS: (data) => ({ data }),
     DELETE_DOCUMENT_FAILURE: (error) => ({ error }),
   },
-  'FETCH_DOCUMENTS_STARTED',
-  'FETCH_DOCUMENT_STARTED',
-  'POST_DOCUMENT_STARTED',
-  'UPDATE_DOCUMENT_STARTED',
-  'DELETE_DOCUMENT_STARTED'
+  "FETCH_DOCUMENTS_STARTED",
+  "FETCH_DOCUMENT_STARTED",
+  "POST_DOCUMENT_STARTED",
+  "UPDATE_DOCUMENT_STARTED",
+  "DELETE_DOCUMENT_STARTED"
 );
 
 export const fetchDocuments = (page) => {
@@ -47,7 +46,7 @@ export const fetchDocuments = (page) => {
       const response = await axios.get(`/pdf?page=${page}`);
       dispatch(fetchDocumentsSuccess(response.data));
     } catch (error) {
-      dispatch(fetchDocumentsFailure('Could not retrieve documents.'));
+      dispatch(fetchDocumentsFailure("Could not retrieve documents."));
     }
   };
 };
@@ -60,7 +59,7 @@ export const fetchDocument = (filename) => {
       const response = await axios.get(`/pdf/${filename}`);
       dispatch(fetchDocumentSuccess(response.data));
     } catch (error) {
-      dispatch(fetchDocumentFailure('Could not retrieve document.'));
+      dispatch(fetchDocumentFailure("Could not retrieve document."));
     }
   };
 };
@@ -72,9 +71,9 @@ export const deleteDocument = (id) => {
     try {
       await axios.delete(`/pdf/${id}`);
       dispatch(deleteDocumentSuccess(id));
-      dispatch(push('/document'));
+      dispatch(push("/document"));
     } catch (error) {
-      dispatch(deleteDocumentFailure('Could not delete document.'));
+      dispatch(deleteDocumentFailure("Could not delete document."));
     }
   };
 };
@@ -88,24 +87,24 @@ export const updateDocument = (id, data, redirect = true) => {
       dispatch(updateDocumentSuccess(id));
 
       if (redirect) {
-        dispatch(push('/document'));
+        dispatch(push("/document"));
       }
     } catch (error) {
-      dispatch(updateDocumentFailure('Could not update document.'));
+      dispatch(updateDocumentFailure("Could not update document."));
     }
   };
 };
 
-export const postDocument = (url,data) => {
+export const postDocument = (url, data) => {
   return async (dispatch) => {
     dispatch(postDocumentStarted());
 
     try {
-      const response = await axios.post(url,data);
+      const response = await axios.post(url, data);
       dispatch(postDocumentSuccess(response.data));
-      dispatch(push('/document'));
+      dispatch(push("/document"));
     } catch (error) {
-      dispatch(postDocumentFailure('Could not add document.'));
+      dispatch(postDocumentFailure("Could not add document."));
     }
   };
 };
