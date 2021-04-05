@@ -1,0 +1,33 @@
+{
+    "env": {
+        "browser": true,
+        "node" : true,
+        "es2020": true
+    },
+    "extends": [
+        "airbnb",
+        "airbnb/hooks",
+        "prettier",
+        "prettier/react",
+        "eslint:recommended",
+        "plugin:react/recommended"
+    ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion":6,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "prettier"
+    ],
+    "rules": {
+        "prettier/prettier": "error",
+        "no-unused-vars": "warn",
+        "no-console": "off",
+        "func-names": "off",
+        "no-process-exit": "off"
+    }
+}
