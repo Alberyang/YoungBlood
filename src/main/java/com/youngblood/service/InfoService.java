@@ -17,4 +17,6 @@ public interface InfoService {
     void unCollectInfo(String openId, String infoId);
     boolean collectAlreadyInfo(String openId, String infoId);
     List<Info> collectHistoryInfo(String openId,Integer page,Integer limit);
+
+    List<Info> findAll();
 }
