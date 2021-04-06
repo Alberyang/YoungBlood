@@ -14,7 +14,8 @@ import {red} from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import MessageIcon from '@material-ui/icons/Message';
-import Gallery from 'react-grid-gallery';
+import PhotoGallery from './PhotoGallery';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import CommentCard from './CommentCard';
 import CommentBox from './CommentBox';
@@ -25,9 +26,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '20px',
   },
   moment_img: {
+    position: 'relative',
     margin: '0 20px',
-    height: '200px',
-    width: 'auto',
+    width: '80%',
   },
   expand: {
     transform: 'rotate(0deg)',
@@ -47,21 +48,34 @@ const useStyles = makeStyles((theme) => ({
 export default function MomentCard(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
+  const [loadingFlag, setLoaded] = React.useState(true);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
-  // const photodata = props.moment.pic_src.map(getPhoto);
+  const getPhoto = (elem) => {
+    return {
+      src: '/api/image/' + elem,
+      width: 1,
+      height: 1,
+    };
+  };
 
-  // function getPhoto(url) {
-  //   return {
-  //     src: require("../../../img/test-img/" + url),
-  //     thumbnail: require("../../../img/test-img/" + url),
-  //     thumbnailWidth: "auto",
-  //     thumbnailHeight: 150,
-  //   };
-  // }
+  let photodata = undefined;
+  if (props.moment.images) {
+    let photos = props.moment.images.map(getPhoto);
+    // photos = photos.concat(props.moment.images.map(getPhoto));
+    let waitingFlag = loadingFlag ? (
+      <CircularProgress style={{position: 'absolute', top: '50%'}} />
+    ) : undefined;
+    photodata = (
+      <CardMedia className={classes.moment_img} onLoad={() => setLoaded(false)}>
+        {waitingFlag}
+        <PhotoGallery photos={photos} />
+      </CardMedia>
+    );
+  }
 
   return (
     <Card className={classes.root}>
@@ -80,10 +94,8 @@ export default function MomentCard(props) {
           {props.moment.contents}
         </Typography>
       </CardContent>
-      {/* <CardMedia className={classes.moment_img}>
-        <Gallery images={photodata} />
-      </CardMedia> */}
-      <CardActions disableSpacing>
+      {photodata}
+      <CardActions align="left">
         <IconButton aria-label="add to favorites">
           <FavoriteIcon />
         </IconButton>

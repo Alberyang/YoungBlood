@@ -8,19 +8,21 @@ const momentSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
-	username: String,
+    username: String,
     contents: String,
-    comments: [{
-		user: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User',
-		},
-		username: String,
-		contents: String,
-		},
-		{timestamps: true}
-	],
-	like: Number,
+    comments: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        },
+        username: String,
+        contents: String,
+      },
+      {timestamps: true},
+    ],
+    like: Number,
+    images: Array,
   },
   {timestamps: true}
 );
