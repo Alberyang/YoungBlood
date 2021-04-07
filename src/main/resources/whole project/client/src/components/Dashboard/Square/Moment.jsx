@@ -30,30 +30,6 @@ const styles = (theme) => ({
 class Moment extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      moments: [
-        {
-          user: 'Yichao Xu1',
-          time: '2021-03-20 18:00',
-          contents: '我惠天下第一~',
-          comments: [
-            {user: 'Yichao Xu2', time: '2021-03-20 19:00', contents: '赞同'},
-            {user: 'Yichao Xu3', time: '2021-03-21 20:00', contents: '+1'},
-          ],
-          pic_src: ['1.jpg'],
-        },
-        {
-          user: 'Yichao Xu2',
-          time: '2021-03-30 19:00',
-          contents: '惠惠惠惠惠',
-          comments: [
-            {user: 'Yichao Xu2', time: '2021-03-31 19:00', contents: '赞同'},
-            {user: 'Yichao Xu3', time: '2021-03-31 20:00', contents: '+1'},
-          ],
-          pic_src: ['1.jpg', '2.jpg'],
-        },
-      ],
-    };
   }
   componentDidMount() {
     this.props.dispatch(fetchMoment());
@@ -66,7 +42,7 @@ class Moment extends Component {
       mainMomentCard = (
         <div>
           {moments.map((item, index) => (
-            <MomentCard key={index} moment={item} />
+            <MomentCard key={index} moment={item} user={this.props.user} />
           ))}
         </div>
       );

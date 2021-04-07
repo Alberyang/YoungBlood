@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CommentCard(props) {
   const classes = useStyles();
-
+  console.log(props.comment);
   return (
     <Card className={classes.root} style={{border: 'none', boxShadow: 'none'}}>
       <CardHeader
@@ -29,7 +29,11 @@ export default function CommentCard(props) {
           </Avatar>
         }
         title={props.comment.username}
-        subheader={props.comment.time}
+        subheader={
+          props.comment.createdAt.split('T')[0] +
+          ' ' +
+          props.comment.createdAt.split('T')[1].split('.')[0]
+        }
       />
       <CardContent align="left">
         <Typography variant="body2" color="textSecondary" component="p">

@@ -8,7 +8,7 @@ const methodOverride = require('method-override');
 
 const path = require('path');
 const User = mongoose.model('User');
-const Moments = mongoose.model('Moment');
+const Moment = mongoose.model('Moment');
 const Image = mongoose.model('Image');
 
 // file transfer database
@@ -48,22 +48,87 @@ const getMoment = (req, res) => {
       return res.sendStatus(401).send('The user does not exist.');
     }
     let userName = user.username;
-    Moments.find({user: user._id}).then(function (moments) {
-      userMoments = moments.map((moment) => {
-        return {
+    Moment.find({user: user._id}).then(function (moments) {
+	  let momentsList = [];
+	  for(let i = 0; i < moments.length; i++){
+		  momentsList.push({
+		  moment_id:moments[moments.length - i - 1]._id,
           user: userName,
-          contents: moment.contents,
-          created_time: moment.createdAt,
-          comments: moment.comments,
-          images: moment.images,
-          like: moment.like,
-        };
-      });
-      return res.json({moments: userMoments});
+          contents: moments[moments.length - i - 1].contents,
+          created_time: moments[moments.length - i - 1].createdAt,
+          comments: moments[moments.length - i - 1].comments,
+          images: moments[moments.length - i - 1].images,
+          like: moments[moments.length - i - 1].like,
+		  time: moments[moments.length - i - 1].createdAt 
+		  });
+	  }
+	
+      return res.json({moments: momentsList});
     });
   });
 };
 
+const createMoment = (req, res)=>{
+	User.findById(req.payload.id).then(function (user) {
+		if (!user) {
+		  return res.sendStatus(401).send('The user does not exist.');
+		}
+		let moment = new Moment(req.body);
+		moment.username = user.username;
+		moment.user = user;
+		moment.like = [];
+		moment.comments = [];
+		moment.images = [];
+		moment.save().then((moment) => {
+			return res.json({moment_id: moment._id});
+		});
+	});
+};
+
+const createComment = (req, res)=>{
+	User.findById(req.payload.id).then(function (user) {
+		if (!user) {
+		  return res.sendStatus(401).send('The user does not exist.');
+		}
+		let userName = user.username;
+		Moment.findOne({_id: req.params.moment_id}).then(function (moment) {
+			let comments = moment.comments;
+			let newComment = {
+				user: user._id,
+				username: user.username,
+				contents: req.body.contents,
+			}
+			comments.push(newComment); 
+			Moment.findByIdAndUpdate(req.params.moment_id, {comments: comments}).then((moment) => {
+				return res.json({state: "success"}); 
+			});
+	  });
+	});
+};
+
+const like = (req, res)=>{
+	User.findById(req.payload.id).then(function (user) {
+		if (!user) {
+		  return res.sendStatus(401).send('The user does not exist.');
+		}
+		Moment.findOne({_id: req.params.moment_id}).then(function (moment) {
+			let likeState = moment.like;
+			let index = likeState.indexOf(user._id);
+			if(req.body.operation === "dislike" && index !== -1){
+				likeState.splice(index, 1);
+			}else if(req.body.operation === "like" && index === -1){
+				likeState.push(user._id);
+			}
+			Moment.findByIdAndUpdate(req.params.moment_id, {like: likeState}).then((moment) => {
+				return res.json({state: "success"}); 
+			});
+	  });
+	});
+};
+
 module.exports = {
   getMoment,
+  createMoment,
+  createComment,
+  like
 };

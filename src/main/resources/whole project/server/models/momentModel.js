@@ -18,10 +18,18 @@ const momentSchema = new Schema(
         },
         username: String,
         contents: String,
+		createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
+    }
       },
-      {timestamps: true},
+      
     ],
-    like: Number,
+    like: Array,
     images: Array,
   },
   {timestamps: true}

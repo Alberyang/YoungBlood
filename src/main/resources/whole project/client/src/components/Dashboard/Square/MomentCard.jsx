@@ -16,6 +16,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import MessageIcon from '@material-ui/icons/Message';
 import PhotoGallery from './PhotoGallery';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import axios from '../../../helpers/axiosConfig';
 
 import CommentCard from './CommentCard';
 import CommentBox from './CommentBox';
@@ -49,6 +50,18 @@ export default function MomentCard(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [loadingFlag, setLoaded] = React.useState(true);
+  const [comments, updateComments] = React.useState(props.moment.comments);
+  const [likeNumber, setLikeNumber] = React.useState(props.moment.like.length);
+  const [likeState, setLike] = React.useState(
+    props.moment.like.indexOf(props.user.user._id) === -1 ? 'disliked' : 'liked'
+  );
+
+  let likeBtn =
+    likeState === 'disliked' ? (
+      <FavoriteIcon />
+    ) : (
+      <FavoriteIcon style={{color: 'red'}} />
+    );
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -62,8 +75,26 @@ export default function MomentCard(props) {
     };
   };
 
+  const postLike = async (data, moment_id) => {
+    const response = await axios
+      .post(`/moment/like/${moment_id}`, data)
+      .then((res) => {
+        setLike(data.operation + 'd');
+
+        setLikeNumber(
+          data.operation === 'dislike' ? likeNumber - 1 : likeNumber + 1
+        );
+      });
+    return response;
+  };
+
+  const publicLike = () => {
+    let nextOperation = likeState === 'disliked' ? 'like' : 'dislike';
+    let response = postLike({operation: nextOperation}, props.moment.moment_id);
+  };
+
   let photodata = undefined;
-  if (props.moment.images) {
+  if (props.moment.images.length > 0) {
     let photos = props.moment.images.map(getPhoto);
     // photos = photos.concat(props.moment.images.map(getPhoto));
     let waitingFlag = loadingFlag ? (
@@ -87,7 +118,11 @@ export default function MomentCard(props) {
           </Avatar>
         }
         title={props.moment.user}
-        subheader={props.moment.time}
+        subheader={
+          props.moment.time.split('T')[0] +
+          ' ' +
+          props.moment.time.split('T')[1].split('.')[0]
+        }
       />
       <CardContent align="left">
         <Typography variant="body2" color="textSecondary" component="p">
@@ -96,10 +131,10 @@ export default function MomentCard(props) {
       </CardContent>
       {photodata}
       <CardActions align="left">
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
+        <IconButton aria-label="add to favorites" onClick={publicLike}>
+          {likeBtn}
         </IconButton>
-        {props.moment.like}
+        {likeNumber}
         <IconButton
           onClick={handleExpandClick}
           aria-expanded={expanded}
@@ -122,8 +157,11 @@ export default function MomentCard(props) {
               </React.Fragment>
             );
           })}
-
-          <CommentBox />
+          <CommentBox
+            moment_id={props.moment.moment_id}
+            comments={comments}
+            updateComments={updateComments}
+          />
         </CardContent>
       </Collapse>
     </Card>
