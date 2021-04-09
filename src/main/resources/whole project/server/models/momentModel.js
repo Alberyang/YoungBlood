@@ -12,6 +12,7 @@ const momentSchema = new Schema(
     contents: String,
     comments: [
       {
+		  _id:String,
         user: {
           type: mongoose.Schema.Types.ObjectId,
           ref: 'User',

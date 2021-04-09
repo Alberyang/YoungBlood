@@ -48,5 +48,15 @@ momentRouter.post('/like/:moment_id', auth.optional, (req, res) => {
   momentController.like(req, res);
 });
 
+// delete a momment
+momentRouter.delete('/:moment_id', auth.optional, (req, res) => {
+  momentController.deleteOneMoment(req, res);
+});
+
+// delete a comment
+momentRouter.delete('/comment/:moment_id/:comment_id', auth.optional, (req, res) => {
+  momentController.deleteOneComment(req, res);
+});
+
 
 module.exports = momentRouter;

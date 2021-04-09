@@ -13,21 +13,20 @@ import Collapse from '@material-ui/core/Collapse';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import PhotoIcon from '@material-ui/icons/Photo';
-import CloseIcon from '@material-ui/icons/Close';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
-import Snackbar from '@material-ui/core/Snackbar';
 
 import EmojiPicker from './Emoji';
 import MomentCard from './MomentCard';
 import MomentImage from './MomentImage';
 import ReactDOM from 'react-dom';
+import MsgBar from './MessageBar';
 import axios from '../../../helpers/axiosConfig';
 
 const styles = {
   box_card: {
     margin: '20px',
     height: '250px',
-    width: '70%',
+    width: '100%',
   },
   box_textarea: {
     marginTop: '20px',
@@ -50,10 +49,10 @@ class MomentBox extends Component {
     this.state = {
       expanded: false,
       textArea: undefined,
-      snackbarOpen: false,
+      snackbar: undefined,
       moment_id: undefined,
       image_expanded: false,
-      files: undefined,
+      files: [],
     };
     this.divRerf = React.createRef();
   }
@@ -73,22 +72,27 @@ class MomentBox extends Component {
       textArea: node,
     });
   };
+
   loadMomemtImages = (data) => {
     this.setState({
       files: data,
     });
   };
-  handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    this.setState({snackbarOpen: false});
-  };
+
+  postMomentSuccess() {
+    this.setState({
+      snackbar: (
+        <MsgBar msg="Successfully posting a moment!" severity="success" />
+      ),
+    });
+    setTimeout(() => this.setState({snackbar: undefined}), 3 * 1000);
+  }
 
   async postImages(moment_id, data) {
     const response = await axios
       .post(`/moment/upload/${moment_id}`, data)
       .then((res) => {
+        this.postMomentSuccess();
         window.location.reload(true);
       });
     return response;
@@ -105,6 +109,7 @@ class MomentBox extends Component {
         });
         const image_res = this.postImages(moment_id, formData);
       } else {
+        this.postMomentSuccess();
         window.location.reload(true);
       }
     });
@@ -114,7 +119,10 @@ class MomentBox extends Component {
   publishMoment = () => {
     const text = document.getElementById('moment_textarea').value;
     if (text === '') {
-      this.setState({snackbarOpen: true});
+      this.setState({
+        snackbar: <MsgBar msg="Please input something!" severity="error" />,
+      });
+      setTimeout(() => this.setState({snackbar: undefined}), 3 * 1000);
       return;
     }
     let momentData = {
@@ -189,13 +197,16 @@ class MomentBox extends Component {
                 in={this.state.image_expanded}
                 style={{
                   position: 'absolute',
-                  width: '40%',
+                  width: '50%',
                   zIndex: '2',
                   left: '30%',
                   top: '70%',
                 }}
               >
-                <MomentImage loadImages={this.loadMomemtImages} />
+                <MomentImage
+                  currentFiles={this.state.files}
+                  loadImages={this.loadMomemtImages}
+                />
                 <button
                   style={{
                     position: 'absolute',
@@ -222,32 +233,7 @@ class MomentBox extends Component {
             </Button>
           </CardActions>
         </Card>
-
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={this.state.snackbarOpen}
-          autoHideDuration={6000}
-          onClose={this.handleClose}
-          message="Please input something!"
-          action={
-            <React.Fragment>
-              <Button color="secondary" size="small" onClick={this.handleClose}>
-                UNDO
-              </Button>
-              <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={this.handleClose}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </React.Fragment>
-          }
-        />
+        {this.state.snackbar}
       </div>
     );
   }

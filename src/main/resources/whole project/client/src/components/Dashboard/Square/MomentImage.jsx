@@ -6,18 +6,16 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Gallery from 'react-grid-gallery';
-
-const styles = () => ({
-  review_card: {
-    marginBottom: '15px',
-  },
-});
+import Button from '@material-ui/core/Button';
+import MsgBar from './MessageBar';
 
 class MomentImage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       preview_images: undefined,
+      snackbar: undefined,
+      selected_index: [],
     };
     this.extractFormData = this.extractFormData.bind(this);
     this.onChangeFile = this.onChangeFile.bind(this);
@@ -50,6 +48,7 @@ class MomentImage extends React.Component {
           thumbnail: fr.result,
           thumbnailWidth: 'auto',
           thumbnailHeight: '100px',
+          isSelected: false,
         };
         resolve(photodata);
       });
@@ -60,6 +59,36 @@ class MomentImage extends React.Component {
     });
   };
 
+  selectImage = (index, image) => {
+    let selected_index = this.state.selected_index;
+    if (image.isSelected) {
+      let remove_index = selected_index.indexOf(index);
+      selected_index.splice(remove_index, 1);
+    } else {
+      selected_index.push(index);
+    }
+    image.isSelected = !image.isSelected;
+    this.setState({selected_index: selected_index});
+  };
+
+  clearSelected = () => {
+    if (this.state.selected_index.length === 0) return;
+    let fileCollection = this.props.currentFiles;
+    fileCollection = fileCollection.filter((item, index) => {
+      return this.state.selected_index.indexOf(index) === -1;
+    });
+    this.props.loadImages(fileCollection);
+    this.setState({
+      selected_index: [],
+    });
+    this.renderCollection(fileCollection, this.imgPreviewImag.current);
+  };
+
+  clearAll = () => {
+    this.props.loadImages([]);
+    this.setState({preview_images: undefined});
+  };
+
   renderCollection = (collection, container) => {
     Promise.all(collection.map(this.generatePreviewData)).then((imgs) =>
       this.setState({
@@ -68,8 +97,10 @@ class MomentImage extends React.Component {
             <Gallery
               images={imgs}
               thumbnailStyle={this.thumbnailStyle}
+              onSelectImage={this.selectImage}
               rowHeight={150}
               margin={10}
+              enableImageSelection={true}
             />
           </div>
         ),
@@ -78,10 +109,15 @@ class MomentImage extends React.Component {
   };
 
   onChangeFile(e) {
-    let fileCollection = [];
-    const formData = this.extractFormData('#my-form');
-    while (fileCollection.length) {
-      fileCollection.pop();
+    let fileCollection = this.props.currentFiles;
+    if (e.target.files.length + fileCollection.length > 9) {
+      this.setState({
+        snackbar: (
+          <MsgBar msg="You can upload 9 photos at most!" severity="error" />
+        ),
+      });
+      setTimeout(() => this.setState({snackbar: undefined}), 3 * 1000);
+      return;
     }
     Array.from(e.target.files).map((f) => fileCollection.push(f));
     this.props.loadImages(fileCollection);
@@ -98,35 +134,56 @@ class MomentImage extends React.Component {
 
   render() {
     return (
-      <Card>
-        <CardContent>
-          <form
-            action=""
-            className="myForm"
-            id="my-form"
-            display="flex"
-            flexDirection="row"
-            flexWrap="wrap"
-            justifyContent="center"
-          >
-            <input
-              name="pictures"
-              type="file"
-              id="pictures"
-              accept="image/*"
-              multiple
-              onChange={this.onChangeFile}
-            />
-          </form>
-          {this.state.preview_images}
-        </CardContent>
-      </Card>
+      <>
+        <Card>
+          <CardContent>
+            <form action="" className="myForm" id="my-form">
+              Please select images:
+              <Button
+                variant="outlined"
+                color="primary"
+                size="small"
+                onClick={this.clearSelected}
+                style={{marginLeft: '20px', marginRight: '10px'}}
+              >
+                Clear Selected
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                size="small"
+                onClick={this.clearAll}
+              >
+                Clear All
+              </Button>
+              <input
+                accept="image/*"
+                id="contained-button-file"
+                multiple
+                type="file"
+                onChange={this.onChangeFile}
+                style={{
+                  display: 'none',
+                }}
+              />
+              <label htmlFor="contained-button-file">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  component="span"
+                  size="small"
+                >
+                  Upload
+                </Button>
+              </label>
+            </form>
+            {this.state.preview_images}
+          </CardContent>
+        </Card>
+        {this.state.snackbar}
+      </>
     );
   }
 }
 
-const mapStateToProps = (state) => ({
-  ...state,
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(MomentImage));
+export default MomentImage;

@@ -53,9 +53,9 @@ const getMoment = (req, res) => {
 	  for(let i = 0; i < moments.length; i++){
 		  momentsList.push({
 		  moment_id:moments[moments.length - i - 1]._id,
+		  user_id:user._id,
           user: userName,
           contents: moments[moments.length - i - 1].contents,
-          created_time: moments[moments.length - i - 1].createdAt,
           comments: moments[moments.length - i - 1].comments,
           images: moments[moments.length - i - 1].images,
           like: moments[moments.length - i - 1].like,
@@ -93,7 +93,11 @@ const createComment = (req, res)=>{
 		let userName = user.username;
 		Moment.findOne({_id: req.params.moment_id}).then(function (moment) {
 			let comments = moment.comments;
+			const buf = crypto.randomBytes(16);
+			const newId = buf.toString('hex');
+
 			let newComment = {
+				_id: newId, 
 				user: user._id,
 				username: user.username,
 				contents: req.body.contents,
@@ -126,9 +130,50 @@ const like = (req, res)=>{
 	});
 };
 
+// delete a specific moment 
+const deleteOneMoment = (req, res) => {
+	User.findById(req.payload.id).then(function (user) {
+		if (!user) {
+		  return res.sendStatus(401).send('The user does not exist.');
+		}
+		Moment.findOne({_id: req.params.moment_id}).then(function (moment) {
+			let images_name = moment.images;
+			images_name.map((filename) => {
+				gfs.remove({filename: filename}, function(err){
+				  if (err) return false;
+				  return true;          
+				})
+			})
+			Moment.remove({_id: req.params.moment_id}).then((moment) => {
+				return res.json({state: "success"});
+			})
+		})
+	})
+}
+
+// delete a specific comment
+const deleteOneComment = (req, res) => {
+	User.findById(req.payload.id).then(function (user) {
+		if (!user) {
+		  return res.sendStatus(401).send('The user does not exist.');
+		}
+		Moment.findOne({_id: req.params.moment_id}).then(function (moment) {
+			let comments = moment.comments;
+			let newComments = comments.filter((item) => {
+				return item._id !== req.params.comment_id;
+			})
+			Moment.findByIdAndUpdate(req.params.moment_id, {comments: newComments}).then((moment) => {
+				return res.json({state: "success"}); 
+			});
+		});
+	})
+}
+
 module.exports = {
   getMoment,
   createMoment,
   createComment,
+  deleteOneMoment,
+  deleteOneComment,
   like
 };

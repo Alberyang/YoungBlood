@@ -12,6 +12,7 @@ import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import Collapse from '@material-ui/core/Collapse';
 import EmojiPicker from './Emoji';
 import axios from '../../../helpers/axiosConfig';
+import MsgBar from './MessageBar';
 
 const styles = {
   box_card: {
@@ -37,14 +38,19 @@ class CommentBox extends Component {
     this.state = {
       expanded: false,
       textArea: undefined,
+      moment_id: this.props.moment_id,
+      username: this.props.user.user.username,
+      snackbar: undefined,
     };
     this.divRerf = React.createRef();
   }
+
   handleExpandClick = () => {
     this.setState({
       expanded: !this.state.expanded,
     });
   };
+
   componentDidMount() {
     const node = this.divRerf.current;
     this.setState({
@@ -56,27 +62,39 @@ class CommentBox extends Component {
     const response = await axios
       .post(`/moment/comment/${moment_id}`, data)
       .then((res) => {
-        let myDate = new Date();
         let newComment = {
-          username: this.props.user.user.username,
+          username: this.state.username,
           contents: data.contents,
-          createdAt:
-            myDate.toLocaleDateString() +
-            'T' +
-            myDate.toLocaleTimeString() +
-            '.',
+          createdAt: new Date().toString(),
         };
-        this.props.updateComments(this.props.comments.push(newComment));
+        this.divRerf.current.value = '';
+        this.setState({
+          snackbar: (
+            <MsgBar msg="Successfully commenting!" severity="success" />
+          ),
+        });
+        setTimeout(() => this.setState({snackbar: undefined}), 3 * 1000);
+        // deep copy
+        let newComments = this.props.comments.map((item) => item);
+        newComments.push(newComment);
+        this.props.updateComments(newComments);
       });
     return response;
   }
 
   publicComment = () => {
     const text = this.divRerf.current.value;
+    if (text === '') {
+      this.setState({
+        snackbar: <MsgBar msg="Please input something!" severity="error" />,
+      });
+      setTimeout(() => this.setState({snackbar: undefined}), 3 * 1000);
+      return;
+    }
     let commentData = {
       contents: text,
     };
-    let response = this.postComment(commentData, this.props.moment_id);
+    let response = this.postComment(commentData, this.state.moment_id);
   };
 
   render() {
@@ -143,6 +161,7 @@ class CommentBox extends Component {
             </Collapse>
           </CardActions>
         </Card>
+        {this.state.snackbar}
       </div>
     );
   }
