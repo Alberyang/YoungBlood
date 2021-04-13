@@ -31,7 +31,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import EmojiPicker from './Emoji';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
-import Pagination from '@material-ui/lab/Pagination';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,8 +61,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const themeContext = React.createContext(null);
-
 export default function MomentCard(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
@@ -76,11 +73,10 @@ export default function MomentCard(props) {
   const [snackbar, setSnackbar] = React.useState(undefined);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const inputRef = React.useRef(undefined);
-  const updateView = React.useState()[1];
 
   let initialAvatar = (
     <Avatar aria-label="recipe" className={classes.avatar}>
-      {props.moment.username[0]}
+      {props.moment.user[0]}
     </Avatar>
   );
 
@@ -92,7 +88,6 @@ export default function MomentCard(props) {
 
   const [forwardBoxOpen, setForwardBox] = React.useState(false);
   const [emojiExpand, setEmojiExpand] = React.useState(false);
-  const [currentPage, setPage] = React.useState(1);
 
   React.useEffect(() => {
     const response = getAvatar();
@@ -124,7 +119,7 @@ export default function MomentCard(props) {
         <MsgBar msg="Successfully deleting a moment!" severity="success" />
       );
       setTimeout(() => setSnackbar(undefined), 3 * 1000);
-      let response = deleteOneMoment(props.moment.id);
+      let response = deleteOneMoment(props.moment.moment_id);
     }
   };
 
@@ -136,14 +131,10 @@ export default function MomentCard(props) {
     setExpanded(!expanded);
   };
 
-  const pageChange = (event, page) => {
-    setPage(page);
-  };
-
   const getPhoto = (elem) => {
     return {
-      src: elem,
-      thumbnail: elem,
+      src: '/api/image/' + elem,
+      thumbnail: '/api/image/' + elem,
       thumbnailWidth: 'auto',
       thumbnailHeight: 180,
     };
@@ -173,10 +164,7 @@ export default function MomentCard(props) {
 
   const postLike = async (data, moment_id) => {
     const response = await axios
-      .post(
-        `http://121.4.57.204:8080/info/${data.operation}/${props.user.user._id}/${moment_id}`,
-        data
-      )
+      .post(`/moment/like/${moment_id}`, data)
       .then((res) => {
         setLike(data.operation + 'd');
 
@@ -189,18 +177,16 @@ export default function MomentCard(props) {
 
   const publicLike = () => {
     let nextOperation = likeState === 'disliked' ? 'like' : 'dislike';
-    let response = postLike({operation: nextOperation}, props.moment.id);
+    let response = postLike({operation: nextOperation}, props.moment.moment_id);
   };
 
   const deleteOneMoment = async (moment_id) => {
-    const response = await axios
-      .delete(`http://121.4.57.204:8080/info/${moment_id}`)
-      .then((res) => {
-        let newMoments = props.momentList.filter((item) => {
-          return item.id !== props.moment.id;
-        });
-        props.updateMoments(newMoments);
+    const response = await axios.delete(`/moment/${moment_id}`).then((res) => {
+      let newMoments = props.momentList.filter((item) => {
+        return item.moment_id !== props.moment.moment_id;
       });
+      props.updateMoments(newMoments);
+    });
     return response;
   };
 
@@ -209,15 +195,14 @@ export default function MomentCard(props) {
   };
 
   let photodata = undefined;
-  if (props.moment.hasImage) {
+  if (props.moment.images.length > 0) {
     let photos = props.moment.images.map(getPhoto);
+    // let waitingFlag = loadingFlag ? (
+    //   <CircularProgress style={{position: 'absolute', top: '50%'}} />
+    // ) : undefined;
     photodata = (
       <CardMedia className={classes.moment_img}>
-        <Gallery
-          backdropClosesModal={true}
-          images={photos}
-          thumbnailStyle={thumbnailStyle}
-        />
+        <Gallery images={photos} thumbnailStyle={thumbnailStyle} />
       </CardMedia>
     );
     setTimeout(() => setLoaded(false), 10 * 1000);
@@ -229,16 +214,17 @@ export default function MomentCard(props) {
         <CardHeader
           align="left"
           avatar={avatar}
-          title={props.moment.username}
+          title={props.moment.user}
           subheader={dateFormat(
             'YYYY-mm-dd HH:MM:SS',
-            new Date(parseInt(props.moment.createDate) * 1000)
+            new Date(props.moment.time)
           )}
         />
         <CardContent align="left">
           <Typography variant="body2" color="textSecondary" component="p">
             {props.moment.contents}
           </Typography>
+
           <IconButton
             style={{position: 'absolute', top: '5px', right: '10px'}}
             size="small"
@@ -272,40 +258,24 @@ export default function MomentCard(props) {
           </CardActions>
           <Collapse in={expanded} timeout="auto" unmountOnExit>
             <CardContent>
-              <themeContext.Provider
-                value={{comments, updateComments, updateView}}
-              >
-                {comments.map((comment, index) => {
-                  return index >= (currentPage - 1) * 4 &&
-                    index < currentPage * 4 ? (
-                    <React.Fragment key={index}>
-                      <CommentCard
-                        moment_id={props.moment.id}
-                        comment={comment}
-                      />
-                      <Divider variant="middle" />
-                    </React.Fragment>
-                  ) : undefined;
-                })}
-
-                {Math.ceil(comments.length / 4) > 1 ? (
-                  <Pagination
-                    color="primary"
-                    style={{marginTop: '20px', display: 'inline-block'}}
-                    count={Math.ceil(comments.length / 4)}
-                    onChange={pageChange}
-                    showFirstButton
-                    showLastButton
-                  />
-                ) : undefined}
-
-                <CommentBox
-                  moment_id={props.moment.id}
-                  comments={comments}
-                  updateComments={updateComments}
-                  updateView={updateView}
-                />
-              </themeContext.Provider>
+              {comments.map((comment, index) => {
+                return (
+                  <React.Fragment key={index}>
+                    <CommentCard
+                      moment_id={props.moment.moment_id}
+                      commentList={comments}
+                      comment={comment}
+                      updateComments={updateComments}
+                    />
+                    <Divider variant="middle" />
+                  </React.Fragment>
+                );
+              })}
+              <CommentBox
+                moment_id={props.moment.moment_id}
+                comments={comments}
+                updateComments={updateComments}
+              />
             </CardContent>
           </Collapse>
         </div>

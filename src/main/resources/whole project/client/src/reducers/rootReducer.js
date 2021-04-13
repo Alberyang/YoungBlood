@@ -7,7 +7,6 @@ import project from './projectReducer';
 import view from './viewReducer';
 import experience from './experienceReducer';
 import course from './courseReducer';
-import moment from './momentReducer';
 
 export default (history) =>
   combineReducers({
@@ -19,5 +18,4 @@ export default (history) =>
     view,
     experience,
     course,
-    moment,
   });

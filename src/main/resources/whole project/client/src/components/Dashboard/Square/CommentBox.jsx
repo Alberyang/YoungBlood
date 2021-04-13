@@ -60,12 +60,15 @@ class CommentBox extends Component {
 
   async postComment(data, moment_id) {
     const response = await axios
-      .post(`/moment/comment/${moment_id}`, data)
+      .post(
+        `http://121.4.57.204:8080/info/review/${moment_id}/${this.props.user.user._id}`,
+        data
+      )
       .then((res) => {
         let newComment = {
           username: this.state.username,
           contents: data.contents,
-          createdAt: new Date().toString(),
+          createDate: parseInt(new Date().getTime() / 1000),
         };
         this.divRerf.current.value = '';
         this.setState({
@@ -74,10 +77,11 @@ class CommentBox extends Component {
           ),
         });
         setTimeout(() => this.setState({snackbar: undefined}), 3 * 1000);
-        // deep copy
-        let newComments = this.props.comments.map((item) => item);
-        newComments.push(newComment);
-        this.props.updateComments(newComments);
+        // shallow copy and force update
+        this.props.comments.push(newComment);
+        this.props.updateComments(this.props.comments);
+        this.props.updateView(1);
+        this.props.updateView(0);
       });
     return response;
   }

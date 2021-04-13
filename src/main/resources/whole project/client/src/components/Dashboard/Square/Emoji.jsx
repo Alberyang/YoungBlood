@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Picker from "emoji-picker-react";
+import React, {useState} from 'react';
+import Picker from 'emoji-picker-react';
 
 export default function EmojiPicker(props) {
   const onEmojiClick = (event, emojiObject) => {
@@ -17,7 +17,7 @@ export default function EmojiPicker(props) {
   };
 
   return (
-    <div>
+    <div style={{marginLeft: '20px'}}>
       <Picker onEmojiClick={onEmojiClick} />
     </div>
   );

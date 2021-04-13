@@ -10,6 +10,13 @@ import axios from '../../../helpers/axiosConfig';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import MsgBar from './MessageBar';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import {themeContext} from './MomentCard';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,11 +60,14 @@ export default function CommentCard(props) {
 
   const [avatar, setAvatar] = React.useState(initialAvatar);
   const [snackbar, setSnackbar] = React.useState(undefined);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
 
   const getAvatar = async () => {
     const response = await axios.get(`/avatar`);
     return response;
   };
+
+  const {updateComments, comments, updateView} = React.useContext(themeContext);
 
   React.useEffect(() => {
     const response = getAvatar();
@@ -67,25 +77,36 @@ export default function CommentCard(props) {
     });
   }, []);
 
-  const deleteOneComment = async (moment_id, comment_id) => {
+  const deleteOneComment = async (comment_id) => {
     const response = await axios
-      .delete(`/moment/comment/${moment_id}/${comment_id}`)
+      .delete(`http://121.4.57.204:8080/info/review/${comment_id}`)
       .then((res) => {
-        let newComments = props.commentList.filter((item) => {
-          return item._id !== comment_id;
-        });
-        setSnackbar(
-          <MsgBar msg="Successfully deleting the comment!" severity="success" />
-        );
-        setTimeout(() => setSnackbar(undefined), 3 * 1000);
-        // deep copy
-        props.updateComments(newComments);
+        let index = 0;
+        for (let key in comments) {
+          if (comments[key].id === comment_id) {
+            index = key;
+            break;
+          }
+        }
+        comments.splice(index, 1);
+        // shallow copy and force update
+        updateComments(comments);
+        updateView(1);
+        updateView(0);
       });
     return response;
   };
 
-  const deleteComment = () => {
-    let response = deleteOneComment(props.moment_id, props.comment._id);
+  const handleClose = (deleteFlag) => {
+    console.log(comments);
+    setDialogOpen(false);
+    if (deleteFlag) {
+      setSnackbar(
+        <MsgBar msg="Successfully deleting a comment!" severity="success" />
+      );
+      setTimeout(() => setSnackbar(undefined), 3 * 1000);
+      let response = deleteOneComment(props.comment.id);
+    }
   };
 
   return (
@@ -100,7 +121,7 @@ export default function CommentCard(props) {
           title={props.comment.username}
           subheader={dateFormat(
             'YYYY-mm-dd HH:MM:SS',
-            new Date(props.comment.createdAt)
+            new Date(parseInt(props.comment.createDate) * 1000)
           )}
         />
         <CardContent align="left">
@@ -112,13 +133,36 @@ export default function CommentCard(props) {
             size="small"
             aria-label="close"
             color="inherit"
-            onClick={deleteComment}
+            onClick={() => setDialogOpen(true)}
           >
             <CloseIcon fontSize="small" />
           </IconButton>
         </CardContent>
       </Card>
       {snackbar}
+      <Dialog
+        fullWidth={true}
+        open={dialogOpen}
+        onClose={() => handleClose(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        maxWidth="sm"
+      >
+        <DialogTitle id="alert-dialog-title">{'WARNING'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {'Do you want to delete this comment?'}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleClose(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => handleClose(true)} style={{color: 'red'}}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

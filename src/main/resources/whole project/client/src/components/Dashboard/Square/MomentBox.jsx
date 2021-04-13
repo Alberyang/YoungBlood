@@ -88,31 +88,33 @@ class MomentBox extends Component {
     setTimeout(() => this.setState({snackbar: undefined}), 3 * 1000);
   }
 
-  async postImages(moment_id, data) {
-    const response = await axios
-      .post(`/moment/upload/${moment_id}`, data)
-      .then((res) => {
-        this.postMomentSuccess();
-        window.location.reload(true);
-      });
+  async fetchNewMoment(moment_id) {
+    const response = await axios.get(
+      `http://121.4.57.204:8080/info/detail/${moment_id}`
+    );
     return response;
   }
 
   async postMoment(data) {
-    const response = await axios.post('/moment/content', data).then((res) => {
-      let moment_id = res.data.moment_id;
-      this.setState({moment_id: moment_id});
-      if (this.state.files) {
-        const formData = new FormData();
-        this.state.files.map((file) => {
-          formData.append('files', file);
-        });
-        const image_res = this.postImages(moment_id, formData);
-      } else {
+    const formData = new FormData();
+    if (this.state.files) {
+      this.state.files.map((file) => {
+        formData.append('files', file);
+      });
+    }
+    formData.append('contents', data.contents);
+    const response = await axios
+      .post('http://121.4.57.204:8080/info/606c453064ad461348e31a23', formData)
+      .then((res) => {
         this.postMomentSuccess();
-        window.location.reload(true);
-      }
-    });
+        this.fetchNewMoment(res.data.data).then((res) => {
+          let newComment = res.data.data;
+          this.props.moments.unshift(newComment);
+          this.props.updateMoments(this.props.moments);
+          this.props.updateView(true);
+          this.props.updateView(false);
+        });
+      });
     return response;
   }
 

@@ -37,12 +37,15 @@ class Moment extends Component {
     this.state = {
       moments: undefined,
       tabSelected: 0,
+      updateFlag: false,
     };
     this.fetchMoments();
   }
 
   async fetchMoments() {
-    const response = await axios.get(`/moment`);
+    const response = await axios.get(
+      `http://121.4.57.204:8080/info/606c453064ad461348e31a23?isRefresh=True`
+    );
     return response;
   }
 
@@ -56,10 +59,17 @@ class Moment extends Component {
     });
   };
 
+  updateView = (data) => {
+    this.setState({
+      updateFlag: data,
+    });
+  };
+
   componentDidMount() {
     const response = this.fetchMoments();
     response.then((res) => {
-      this.setState({moments: res.data.moments});
+      console.log(res.data);
+      this.setState({moments: res.data.data});
     });
   }
   generateView(filter_id) {
@@ -67,7 +77,11 @@ class Moment extends Component {
     if (!filter_id) {
       return (
         <>
-          <MomentBox />
+          <MomentBox
+            moments={this.state.moments}
+            updateMoments={this.updateMoments}
+            updateView={this.updateView}
+          />
           <Card className={classes.moments}>
             <CardContent id="moment_card">
               {this.state.moments
@@ -88,7 +102,7 @@ class Moment extends Component {
     } else {
       let filterMoments = this.state.moments
         ? this.state.moments.filter((item) => {
-            return item.user_id === this.props.user.user._id;
+            return item.user === filter_id;
           })
         : undefined;
       return (
@@ -153,9 +167,9 @@ class Moment extends Component {
           aria-label="disabled tabs example"
           centered
         >
-          <Tab label="All" />
-          <Tab label="My Moments" />
-          <Tab label="Official Moments" />
+          <Tab label="All" index={0} />
+          <Tab label="My Moments" index={1} />
+          <Tab label="Official Moments" index={2} />
         </Tabs>
         <div
           style={{

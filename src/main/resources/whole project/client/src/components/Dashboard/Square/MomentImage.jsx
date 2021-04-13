@@ -95,6 +95,7 @@ class MomentImage extends React.Component {
         preview_images: (
           <div style={{marginTop: '10px'}}>
             <Gallery
+              backdropClosesModal={true}
               images={imgs}
               thumbnailStyle={this.thumbnailStyle}
               onSelectImage={this.selectImage}
