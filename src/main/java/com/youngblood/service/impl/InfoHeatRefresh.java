@@ -31,20 +31,25 @@ public class InfoHeatRefresh {
     @Autowired
     private RedisUtil redisUtil;
 
-//    @Scheduled(fixedRate=60000)
+    @Scheduled(fixedRate=30000)
     public void refreshSnapshot(){
         List<Info> all = infoService.findAll();
         List<InfoSnapshot> result = new ArrayList<>();
         Date date = new Date();
         for(Info info:all){
             InfoSnapshot target = infoSnapshotDAO.findUpDateById(info.getId());
-            int num = Math.toIntExact(redisUtil.sSize("like:" + info.getId()));
+            int likeNum = Math.toIntExact(redisUtil.sSize("micro:like:" + info.getId()));
+            String viewNumTemp = redisUtil.get("micro:view:" + info.getId());
+            int viewNum;
+            if (viewNumTemp==null) viewNum = 1;
+            else viewNum = Integer.parseInt(viewNumTemp);
             if(target!=null && target.getInfo().getReviews() == info.getReviews()
-                    &&target.getInfo().getThumbs() == num
-                    &&target.getInfo().getViews() == info.getViews()){
+                    &&target.getInfo().getThumbs() == likeNum
+                    &&target.getInfo().getViews() == viewNum){
                 continue;
             }
-            info.setThumbs(num);
+            info.setThumbs(likeNum);
+            info.setViews(viewNum);
             result.add(new InfoSnapshot(info,date.getTime()/1000,info.getId()));
         }
         if(result.size()!=0){
@@ -54,7 +59,7 @@ public class InfoHeatRefresh {
         }
     }
 
-//    @Scheduled(fixedRate=60000)
+    @Scheduled(fixedRate=30000)
     public void refreshHeat(){
         // 距现在的时间超过3小时即删除
         boolean flag = infoSnapshotDAO.deleteOutDate();
@@ -62,7 +67,7 @@ public class InfoHeatRefresh {
         else System.out.println("快照表旧数据删除异常，请查看日志");
     }
 
-//    @Scheduled(fixedRate=60000)
+    @Scheduled(fixedRate=30000)
     public void deleteOldSnapshot(){
         //清空当前热度表
         boolean dropFlag = infoHeatDAO.dropCollection();
@@ -97,17 +102,17 @@ public class InfoHeatRefresh {
         }
     }
 
-//    @Scheduled(fixedRate=80000)
+    @Scheduled(fixedRate=50000)
     //更新redis中的热度表
     public void refreshRedisHeatInfo(){
-        redisUtil.delete("allHeatInfo");
+        redisUtil.delete("micro_allHeatInfo");
         List<InfoHeat> allCurHeatInfo = infoHeatDAO.getAllCurHeatInfo();
         Set<ZSetOperations.TypedTuple<String>> values = new HashSet<>();
         for(InfoHeat infoHeat:allCurHeatInfo){
             values.add(new DefaultTypedTuple<String>(infoHeat.getInfoId(), (double) infoHeat.getHeat()));
         }
         if(values.size()!=0){
-            redisUtil.zAdd("allHeatInfo",values);
+            redisUtil.zAdd("micro_allHeatInfo",values);
         }
     }
 

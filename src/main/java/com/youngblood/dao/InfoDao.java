@@ -12,5 +12,5 @@ public interface InfoDao {
     String saveInfo(Info info,String openId);
     boolean deleteById(String id);
     boolean updateInfo(Info info);
-    void addInfoView(String id);
+    void updateInfoReviewNum(String infoId,int num);
 }

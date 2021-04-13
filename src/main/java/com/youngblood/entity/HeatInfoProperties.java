@@ -16,7 +16,7 @@ public class HeatInfoProperties {
     private int ucb_valueA;
     private int ucb_valueB;
     private int return_nums;
-    private long openId_outtime;
+    private long userId_outtime;
     private long snapshot_del_time;
 
 }

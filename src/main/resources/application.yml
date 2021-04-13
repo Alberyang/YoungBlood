@@ -1,7 +1,7 @@
 server:
-  port: 5000
+  port: 8080
 http:
-  port: 5000
+  port: 8080
 spring:
   data:
     mongodb:
@@ -20,6 +20,6 @@ heatinfo:
   ucb_valueA: 10  # 不火的新帖子热度权重  // ucb算法思想：刚发布的帖子没有任何数值，应该explore，将热度置位一定值
   ucb_valueB: 15  # 暂时用不到
   return_nums: 10 # 一次请求返回给前端的帖子数量
-  openId_outtime: 30 #分钟为单位 redis中openId每个人的浏览历史记录保存时间
+  userId_outtime: 30 #分钟为单位 redis中openId每个人的浏览历史记录保存时间
   snapshot_del_time: 3600000 # snapshot表删除期限 默认删除3小时以前的数据 单位毫秒
 

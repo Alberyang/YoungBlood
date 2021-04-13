@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.net.URL;
+import java.util.List;
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,8 +18,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Info {
     @Id
     private String id;
-    private String title; // info - title
-    private String text; // info - content - limit the number of words to 255
+//    private String title; // info - title
+    private String contents; // info - content - limit the number of words to 255
+    @Nullable
+    private Set<String> like;
+    @Nullable
+    private List<String> images;  // save the images url
+    @Nullable
+    private List<InfoReview> comments;
+    private String username;
+    private String user; // userId
     @Nullable
     private int thumbs;
     @Nullable
@@ -24,9 +36,7 @@ public class Info {
     private int reviews;
     private Long createDate; //创建日期
     private Long updateDate; //更新时间
-    private User user;
-    @Nullable
-    private String[] urls;  // save the images url
+//    private User user;
     @Nullable
     private boolean hasImage;
 

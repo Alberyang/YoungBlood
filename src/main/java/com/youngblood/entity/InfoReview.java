@@ -14,10 +14,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class InfoReview {
     @Id
     private String id;
-    private String content;
-    private User user;
-    private String infoId;
+    private String contents;
+//    private User user;
+    private String user;// userId
+    private String username;
     private Long createDate;
+    private Long updateDate;
     @Nullable
     private Integer thumbs;
+    private String infoId;
 }
