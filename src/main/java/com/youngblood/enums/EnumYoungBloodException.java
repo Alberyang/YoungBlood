@@ -21,6 +21,7 @@ public enum  EnumYoungBloodException {
     REVIEW_CANNOT_BE_FOUND(400,"Review cannot be found"),
     REVIEW_ADDED_ERROR(500,"Review added error"),
     REVIEW_DELETED_ERROR(500,"Review deleted error"),
+    REVIEW_CONTENT_NULL(400,"Review content is null, please assign a value to the field of content"),
     PICTURES_UPLOAD_ERROR(500,"File can't be uploaded"),
     PICTURES_DELETED_ERROR(500,"Delete pictures error")
 

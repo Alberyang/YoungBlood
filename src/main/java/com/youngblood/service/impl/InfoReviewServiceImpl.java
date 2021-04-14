@@ -48,9 +48,9 @@ public class InfoReviewServiceImpl implements InfoReviewService {
     }
 
     @Override
-    public boolean saveInfoReview(String infoId, String userId, InfoReview infoReview) {
-        if(infoId==null || infoReview==null){
-            return false;
+    public String saveInfoReview(String infoId, String userId, InfoReview infoReview) {
+        if(infoId==null || infoReview==null||userId ==null){
+            throw new YoungBloodException(EnumYoungBloodException.REVIEW_CONTENT_NULL);
         }
         User user = userDao.findByUserId(userId);
         infoReview.setInfoId(infoId);
@@ -58,7 +58,10 @@ public class InfoReviewServiceImpl implements InfoReviewService {
         infoReview.setUsername(user.getUsername());
         infoDao.updateInfoReviewNum(infoId,1);
 //        Info info = infoDao.findById(infoId);
-        boolean flag = infoReviewDao.saveInfoReview(infoReview);
+        String reviewId = infoReviewDao.saveInfoReview(infoReview);
+        if(reviewId==null){
+            throw new YoungBloodException(EnumYoungBloodException.REVIEW_ADDED_ERROR);
+        }
         //推送信息 弱一致性
 //        PushMsgStatus pushMsgStatus = new PushMsgStatus();
 //        pushMsgStatus.setCreateTime(String.valueOf(new Date().getTime()/1000));
@@ -76,7 +79,7 @@ public class InfoReviewServiceImpl implements InfoReviewService {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-        return flag;
+        return reviewId;
     }
 
     @Override

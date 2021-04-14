@@ -84,24 +84,30 @@ public class InfoDaoImpl implements InfoDao {
     public boolean deleteById(String id) {
         // 需要删除该贴对应的redis中点赞 浏览数 mongo中info review 热度 镜像 对象存储图片信息
         Info info = this.findById(id);
-        List<String> images = info.getImages();
+        if(info.isHasImage()){
+            List<String> images = info.getImages();
+            try {
+                pictureService.deleteObjects(images);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new YoungBloodException(EnumYoungBloodException.PICTURES_DELETED_ERROR);
+            }
+        }
+        // delete info
         Query delInfo = new Query();
         delInfo.addCriteria(Criteria.where("id").is(id));
         DeleteResult removeA = mongoTemplate.remove(delInfo, Info.class);
+        // delete heat
         Query delHeat = new Query();
         delHeat.addCriteria(Criteria.where("infoId").is(id));
         DeleteResult removeB = mongoTemplate.remove(delInfo, InfoHeat.class);
+        // delete snapshot
         Query delSnapShot = new Query();
         delSnapShot.addCriteria(Criteria.where("oriInfoId").is(id));
         DeleteResult removeC = mongoTemplate.remove(delInfo, InfoSnapshot.class);
+        // delete infoReview
         Boolean removeD = infoReviewDao.deleteByInfoId(id);
-        try {
-            pictureService.deleteObjects(images);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new YoungBloodException(EnumYoungBloodException.PICTURES_DELETED_ERROR);
-        }
-        redisUtil.sRemove("micro:like:"+id);
+        redisUtil.delete("micro:like:"+id);
         redisUtil.delete("micro:view:"+id);
 //        redisUtil.zRemove("micro_allHeatInfo",new Object[]{id});
         return removeA.wasAcknowledged()&&removeB.wasAcknowledged()&&removeC.wasAcknowledged()&&removeD;

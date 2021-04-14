@@ -56,11 +56,11 @@ public class InfoWebController {
     @PostMapping("{userId}")
     //@RequestBody Info info,
     public ResponseEntity<ResponseContent> addInfo(@RequestParam("contents") String contents,
-                                                   @RequestParam("files") MultipartFile[] multipartFile,
+                                                   @RequestParam(value = "files",required = false) MultipartFile[] multipartFile,
                                                    @PathVariable("userId") String userId){
         Info info = new Info();
         info.setContents(contents);
-        if(multipartFile.length==0) info.setHasImage(false);
+        if(multipartFile==null) info.setHasImage(false);
         else info.setHasImage(true);
         String infoId = infoService.saveInfo(info, userId,multipartFile);
         return ResponseEntity.status(200).body(new ResponseContent(200,infoId,"success~"));
@@ -84,9 +84,8 @@ public class InfoWebController {
     public ResponseEntity<ResponseContent> addInfo(@PathVariable(value = "infoId") String infoId,
                                                    @PathVariable(value = "userId") String userId,
                                                    @RequestBody InfoReview infoReview){
-        boolean flag = infoReviewService.saveInfoReview(infoId, userId, infoReview);
-        if (!flag) throw new YoungBloodException(EnumYoungBloodException.REVIEW_ADDED_ERROR);
-        return ResponseEntity.status(200).body(new ResponseContent(200,"","ok~"));
+        String reviewId  = infoReviewService.saveInfoReview(infoId, userId, infoReview);
+        return ResponseEntity.status(200).body(new ResponseContent(200,reviewId,"ok~"));
     }
     //删除评论信息
     @DeleteMapping("review/{reviewId}")
@@ -102,7 +101,7 @@ public class InfoWebController {
         return ResponseEntity.status(200).body(new ResponseContent(200,infoId,"like(≧∇≦)ﾉ"));
     }
     //取消点赞
-    @PostMapping("unlike/{userId}/{infoId}")
+    @PostMapping("dislike/{userId}/{infoId}")
     public ResponseEntity<ResponseContent> unLikeInfo(@PathVariable("userId") String userId,
                                                       @PathVariable("infoId") String infoId){
         infoService.unLikeInfo(userId,infoId);
@@ -135,7 +134,7 @@ public class InfoWebController {
         return ResponseEntity.status(200).body(new ResponseContent(200,infoId,"collect~"));
     }
     //取消收藏
-    @PostMapping("uncollect/{userId}/{infoId}")
+    @PostMapping("discollect/{userId}/{infoId}")
     public ResponseEntity<ResponseContent> unCollectInfo(@PathVariable("userId") String userId,
                                                          @PathVariable("infoId") String infoId){
         infoService.unCollectInfo(userId,infoId);

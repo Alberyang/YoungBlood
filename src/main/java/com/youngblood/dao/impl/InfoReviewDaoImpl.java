@@ -54,14 +54,11 @@ public class InfoReviewDaoImpl implements InfoReviewDao {
     }
 
     @Override
-    public boolean saveInfoReview(InfoReview infoReview) {
+    public String saveInfoReview(InfoReview infoReview) {
         infoReview.setCreateDate(new Date().getTime()/1000);
         infoReview.setUpdateDate(new Date().getTime()/1000);
         InfoReview review = mongoTemplate.save(infoReview, "review");
-        if(review.getId()==null){
-            return false;
-        }
-        return true;
+        return review.getId();
     }
 
     @Override
