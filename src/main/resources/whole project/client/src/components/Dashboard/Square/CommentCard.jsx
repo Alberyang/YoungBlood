@@ -98,7 +98,6 @@ export default function CommentCard(props) {
   };
 
   const handleClose = (deleteFlag) => {
-    console.log(comments);
     setDialogOpen(false);
     if (deleteFlag) {
       setSnackbar(

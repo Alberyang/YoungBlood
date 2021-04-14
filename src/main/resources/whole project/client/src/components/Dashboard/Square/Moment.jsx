@@ -68,7 +68,6 @@ class Moment extends Component {
   componentDidMount() {
     const response = this.fetchMoments();
     response.then((res) => {
-      console.log(res.data);
       this.setState({moments: res.data.data});
     });
   }

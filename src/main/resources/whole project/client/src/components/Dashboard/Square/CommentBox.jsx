@@ -66,6 +66,7 @@ class CommentBox extends Component {
       )
       .then((res) => {
         let newComment = {
+          id: res.data.data,
           username: this.state.username,
           contents: data.contents,
           createDate: parseInt(new Date().getTime() / 1000),
@@ -78,7 +79,7 @@ class CommentBox extends Component {
         });
         setTimeout(() => this.setState({snackbar: undefined}), 3 * 1000);
         // shallow copy and force update
-        this.props.comments.push(newComment);
+        this.props.comments.unshift(newComment);
         this.props.updateComments(this.props.comments);
         this.props.updateView(1);
         this.props.updateView(0);
