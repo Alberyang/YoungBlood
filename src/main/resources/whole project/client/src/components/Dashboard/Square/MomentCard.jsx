@@ -29,9 +29,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import EmojiPicker from './Emoji';
+import Picker from 'emoji-picker-react';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import Pagination from '@material-ui/lab/Pagination';
+import ForwardCard from './ForwardCard';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,7 +68,6 @@ export const themeContext = React.createContext(null);
 export default function MomentCard(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
-  const [loadingFlag, setLoaded] = React.useState(true);
   const [comments, updateComments] = React.useState(props.moment.comments);
   const [likeNumber, setLikeNumber] = React.useState(props.moment.like.length);
   const [likeState, setLike] = React.useState(
@@ -93,13 +93,21 @@ export default function MomentCard(props) {
   const [forwardBoxOpen, setForwardBox] = React.useState(false);
   const [emojiExpand, setEmojiExpand] = React.useState(false);
   const [currentPage, setPage] = React.useState(1);
+  const [forwardMoment, setForwardMoment] = React.useState(undefined);
 
   React.useEffect(() => {
     const response = getAvatar();
     response.then((res) => {
-      let avatarName = res.data.files[res.data.files.length - 1].filename;
-      setAvatar(<Avatar alt="Nothing Here" src={'/api/image/' + avatarName} />);
+      if (res.data.files) {
+        let avatarName = res.data.files[res.data.files.length - 1].filename;
+        setAvatar(
+          <Avatar alt="Nothing Here" src={'/api/image/' + avatarName} />
+        );
+      }
     });
+    if (props.moment.hasOwnProperty('isShare') && props.moment.isShare) {
+      getOriginalMoment(props.moment.ori_info.id);
+    }
   }, []);
 
   let likeBtn =
@@ -120,10 +128,6 @@ export default function MomentCard(props) {
   const handleClose = (deleteFlag) => {
     setDialogOpen(false);
     if (deleteFlag) {
-      setSnackbar(
-        <MsgBar msg="Successfully deleting a moment!" severity="success" />
-      );
-      setTimeout(() => setSnackbar(undefined), 3 * 1000);
       let response = deleteOneMoment(props.moment.id);
     }
   };
@@ -196,6 +200,10 @@ export default function MomentCard(props) {
     const response = await axios
       .delete(`http://121.4.57.204:8080/info/${moment_id}`)
       .then((res) => {
+        setSnackbar(
+          <MsgBar msg="Successfully deleting a moment!" severity="success" />
+        );
+        setTimeout(() => setSnackbar(undefined), 5 * 1000);
         let newMoments = props.momentList.filter((item) => {
           return item.id !== props.moment.id;
         });
@@ -206,6 +214,96 @@ export default function MomentCard(props) {
 
   const deleteMoment = () => {
     setDialogOpen(true);
+  };
+
+  const getOriginalMoment = async (moment_id) => {
+    const response = await axios
+      .get(`http://121.4.57.204:8080/info/detail/${moment_id}`)
+      .then((res) => {
+        setForwardMoment(res.data.data);
+      });
+    return response;
+  };
+
+  const onEmojiClick = (event, emojiObject) => {
+    if (inputRef.current) {
+      let start_pos = inputRef.current.selectionStart;
+      let prev_part =
+        inputRef.current.value.substring(0, inputRef.current.selectionStart) +
+        emojiObject.emoji;
+      let after_part = inputRef.current.value.substring(
+        inputRef.current.selectionStart
+      );
+      inputRef.current.value = prev_part + after_part;
+      inputRef.current.selectionStart = start_pos + 2;
+      inputRef.current.selectionEnd = start_pos + 2;
+      inputRef.current.focus();
+    }
+  };
+
+  const forwardDefaultContents = () => {
+    if (
+      props.moment.hasOwnProperty('forwards') &&
+      props.moment.forwards.length > 0
+    ) {
+      let forwardStr = '';
+      props.moment.forwards.map((item) => {
+        forwardStr += `//@${item.username}:${item.contents}`;
+      });
+      return forwardStr;
+    } else {
+      return '';
+    }
+  };
+
+  const fetchNewMoment = async (moment_id) => {
+    const response = await axios.get(
+      `http://121.4.57.204:8080/info/detail/${moment_id}`
+    );
+    return response;
+  };
+
+  const postForwardMoment = async (data) => {
+    const formData = new FormData();
+    formData.append('contents', data.contents);
+    formData.append('infoid', data.infoid);
+    const response = await axios
+      .post(
+        'http://121.4.57.204:8080/info/share/606c453064ad461348e31a23',
+        formData
+      )
+      .then((res) => {
+        setSnackbar(
+          <MsgBar msg="Successfully forward a moment!" severity="success" />
+        );
+        setTimeout(() => setSnackbar(undefined), 3 * 1000);
+        fetchNewMoment(res.data.data).then((res) => {
+          let newMoment = res.data.data;
+          props.momentList.unshift(newMoment);
+          props.updateMoments(props.momentList);
+          props.updateView(true);
+          props.updateView(false);
+        });
+      });
+    return response;
+  };
+
+  const forwardOneMoment = () => {
+    const text = inputRef.current.value;
+    if (text === '') {
+      setSnackbar(<MsgBar msg="Please input something!" severity="error" />);
+      setTimeout(() => setSnackbar(undefined), 3 * 1000);
+      return;
+    }
+    let infoid =
+      props.moment.hasOwnProperty('ori_info') && props.moment.ori_info
+        ? props.moment.ori_info.id
+        : props.moment.id;
+    let momentData = {
+      contents: text,
+      infoid: infoid,
+    };
+    postForwardMoment(momentData);
   };
 
   let photodata = undefined;
@@ -220,7 +318,6 @@ export default function MomentCard(props) {
         />
       </CardMedia>
     );
-    setTimeout(() => setLoaded(false), 10 * 1000);
   }
 
   return (
@@ -253,6 +350,7 @@ export default function MomentCard(props) {
           style={{display: 'flex', flexWrap: 'wrap', flexDirection: 'column'}}
         >
           {photodata}
+          {forwardMoment ? <ForwardCard moment={forwardMoment} /> : undefined}
           <CardActions align="left">
             <IconButton aria-label="add to favorites" onClick={publicLike}>
               {likeBtn}
@@ -269,6 +367,9 @@ export default function MomentCard(props) {
             <IconButton aria-label="share" onClick={() => setForwardBox(true)}>
               <ShareIcon />
             </IconButton>
+            {props.moment.hasOwnProperty('forwards')
+              ? props.moment.forwards.length
+              : 0}
           </CardActions>
           <Collapse in={expanded} timeout="auto" unmountOnExit>
             <CardContent>
@@ -355,6 +456,9 @@ export default function MomentCard(props) {
             placeholder="What's happening?"
             multiline
             variant="outlined"
+            inputProps={{
+              defaultValue: forwardDefaultContents(),
+            }}
           />
         </DialogContent>
         <DialogActions>
@@ -366,11 +470,15 @@ export default function MomentCard(props) {
           >
             <EmojiEmotionsIcon />
           </IconButton>
-          <Button color="primary">Cancel</Button>
-          <Button color="primary">Forward</Button>
+          <Button color="primary" onClick={() => handleForwardClose(false)}>
+            Cancel
+          </Button>
+          <Button color="primary" onClick={forwardOneMoment}>
+            Forward
+          </Button>
         </DialogActions>
         <Collapse in={emojiExpand}>
-          <EmojiPicker node={inputRef.current} />
+          <Picker onEmojiClick={onEmojiClick} />
         </Collapse>
       </Dialog>
     </>

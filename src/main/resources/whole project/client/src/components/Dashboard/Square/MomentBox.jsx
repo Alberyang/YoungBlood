@@ -108,8 +108,8 @@ class MomentBox extends Component {
       .then((res) => {
         this.postMomentSuccess();
         this.fetchNewMoment(res.data.data).then((res) => {
-          let newComment = res.data.data;
-          this.props.moments.unshift(newComment);
+          let newMoment = res.data.data;
+          this.props.moments.unshift(newMoment);
           this.props.updateMoments(this.props.moments);
           this.props.updateView(true);
           this.props.updateView(false);

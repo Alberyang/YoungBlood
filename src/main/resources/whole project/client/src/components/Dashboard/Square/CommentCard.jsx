@@ -81,6 +81,10 @@ export default function CommentCard(props) {
     const response = await axios
       .delete(`http://121.4.57.204:8080/info/review/${comment_id}`)
       .then((res) => {
+        setSnackbar(
+          <MsgBar msg="Successfully deleting a comment!" severity="success" />
+        );
+        setTimeout(() => setSnackbar(undefined), 5 * 1000);
         let index = 0;
         for (let key in comments) {
           if (comments[key].id === comment_id) {
@@ -100,10 +104,6 @@ export default function CommentCard(props) {
   const handleClose = (deleteFlag) => {
     setDialogOpen(false);
     if (deleteFlag) {
-      setSnackbar(
-        <MsgBar msg="Successfully deleting a comment!" severity="success" />
-      );
-      setTimeout(() => setSnackbar(undefined), 3 * 1000);
       let response = deleteOneComment(props.comment.id);
     }
   };

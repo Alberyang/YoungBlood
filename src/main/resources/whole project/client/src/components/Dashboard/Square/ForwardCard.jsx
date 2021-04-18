@@ -34,49 +34,27 @@ import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '100%',
-    marginTop: '20px',
+    width: '90%',
     position: 'relative',
+    margin: '20px auto',
   },
   moment_img: {
     position: 'relative',
-    margin: '0 20px',
+    marginTop: '20px',
+    marginBottom: '20px',
     width: '80%',
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)',
   },
   avatar: {
     backgroundColor: red[500],
-  },
-  forward_textarea: {
-    width: '100%',
   },
 }));
 
 export default function MomentCard(props) {
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
-  const [loadingFlag, setLoaded] = React.useState(true);
-  const [comments, updateComments] = React.useState(props.moment.comments);
-  const [likeNumber, setLikeNumber] = React.useState(props.moment.like.length);
-  const [likeState, setLike] = React.useState(
-    props.moment.like.indexOf(props.user.user._id) === -1 ? 'disliked' : 'liked'
-  );
-  const [snackbar, setSnackbar] = React.useState(undefined);
-  const [dialogOpen, setDialogOpen] = React.useState(false);
-  const inputRef = React.useRef(undefined);
 
   let initialAvatar = (
     <Avatar aria-label="recipe" className={classes.avatar}>
-      {props.moment.user[0]}
+      {props.moment.username[0]}
     </Avatar>
   );
 
@@ -86,9 +64,6 @@ export default function MomentCard(props) {
     return response;
   };
 
-  const [forwardBoxOpen, setForwardBox] = React.useState(false);
-  const [emojiExpand, setEmojiExpand] = React.useState(false);
-
   React.useEffect(() => {
     const response = getAvatar();
     response.then((res) => {
@@ -96,49 +71,6 @@ export default function MomentCard(props) {
       setAvatar(<Avatar alt="Nothing Here" src={'/api/image/' + avatarName} />);
     });
   }, []);
-
-  let likeBtn =
-    likeState === 'disliked' ? (
-      <FavoriteIcon />
-    ) : (
-      <FavoriteIcon style={{color: 'red'}} />
-    );
-
-  const thumbnailStyle = () => {
-    return {
-      border: '1px solid grey',
-      height: '178px',
-      width: 'auto',
-    };
-  };
-
-  const handleClose = (deleteFlag) => {
-    setDialogOpen(false);
-    if (deleteFlag) {
-      setSnackbar(
-        <MsgBar msg="Successfully deleting a moment!" severity="success" />
-      );
-      setTimeout(() => setSnackbar(undefined), 3 * 1000);
-      let response = deleteOneMoment(props.moment.moment_id);
-    }
-  };
-
-  const handleForwardClose = (forwardFlag) => {
-    setForwardBox(false);
-  };
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-
-  const getPhoto = (elem) => {
-    return {
-      src: '/api/image/' + elem,
-      thumbnail: '/api/image/' + elem,
-      thumbnailWidth: 'auto',
-      thumbnailHeight: 180,
-    };
-  };
 
   const dateFormat = (fmt, date) => {
     let ret;
@@ -162,187 +94,56 @@ export default function MomentCard(props) {
     return fmt;
   };
 
-  const postLike = async (data, moment_id) => {
-    const response = await axios
-      .post(`/moment/like/${moment_id}`, data)
-      .then((res) => {
-        setLike(data.operation + 'd');
-
-        setLikeNumber(
-          data.operation === 'dislike' ? likeNumber - 1 : likeNumber + 1
-        );
-      });
-    return response;
+  const thumbnailStyle = () => {
+    return {
+      border: '1px solid grey',
+      height: '178px',
+      width: 'auto',
+    };
   };
 
-  const publicLike = () => {
-    let nextOperation = likeState === 'disliked' ? 'like' : 'dislike';
-    let response = postLike({operation: nextOperation}, props.moment.moment_id);
-  };
-
-  const deleteOneMoment = async (moment_id) => {
-    const response = await axios.delete(`/moment/${moment_id}`).then((res) => {
-      let newMoments = props.momentList.filter((item) => {
-        return item.moment_id !== props.moment.moment_id;
-      });
-      props.updateMoments(newMoments);
-    });
-    return response;
-  };
-
-  const deleteMoment = () => {
-    setDialogOpen(true);
+  const getPhoto = (elem) => {
+    return {
+      src: elem,
+      thumbnail: elem,
+      thumbnailWidth: 'auto',
+      thumbnailHeight: 180,
+    };
   };
 
   let photodata = undefined;
   if (props.moment.images.length > 0) {
     let photos = props.moment.images.map(getPhoto);
-    // let waitingFlag = loadingFlag ? (
-    //   <CircularProgress style={{position: 'absolute', top: '50%'}} />
-    // ) : undefined;
     photodata = (
       <CardMedia className={classes.moment_img}>
         <Gallery images={photos} thumbnailStyle={thumbnailStyle} />
       </CardMedia>
     );
-    setTimeout(() => setLoaded(false), 10 * 1000);
   }
 
   return (
     <>
-      <Card className={classes.root}>
+      <Card className={classes.root} variant="outlined">
         <CardHeader
           align="left"
           avatar={avatar}
-          title={props.moment.user}
+          title={props.moment.username}
           subheader={dateFormat(
             'YYYY-mm-dd HH:MM:SS',
-            new Date(props.moment.time)
+            new Date(parseInt(props.moment.createDate) * 1000)
           )}
         />
         <CardContent align="left">
           <Typography variant="body2" color="textSecondary" component="p">
             {props.moment.contents}
           </Typography>
-
-          <IconButton
-            style={{position: 'absolute', top: '5px', right: '10px'}}
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={deleteMoment}
+          <div
+            style={{display: 'flex', flexWrap: 'wrap', flexDirection: 'column'}}
           >
-            <CloseIcon fontSize="small" />
-          </IconButton>
+            {photodata}
+          </div>
         </CardContent>
-        <div
-          style={{display: 'flex', flexWrap: 'wrap', flexDirection: 'column'}}
-        >
-          {photodata}
-          <CardActions align="left">
-            <IconButton aria-label="add to favorites" onClick={publicLike}>
-              {likeBtn}
-            </IconButton>
-            {likeNumber}
-            <IconButton
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label="comment"
-            >
-              <MessageIcon />
-            </IconButton>
-            {comments.length}
-            <IconButton aria-label="share" onClick={() => setForwardBox(true)}>
-              <ShareIcon />
-            </IconButton>
-          </CardActions>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <CardContent>
-              {comments.map((comment, index) => {
-                return (
-                  <React.Fragment key={index}>
-                    <CommentCard
-                      moment_id={props.moment.moment_id}
-                      commentList={comments}
-                      comment={comment}
-                      updateComments={updateComments}
-                    />
-                    <Divider variant="middle" />
-                  </React.Fragment>
-                );
-              })}
-              <CommentBox
-                moment_id={props.moment.moment_id}
-                comments={comments}
-                updateComments={updateComments}
-              />
-            </CardContent>
-          </Collapse>
-        </div>
       </Card>
-      {snackbar}
-      <Dialog
-        fullWidth={true}
-        open={dialogOpen}
-        onClose={() => handleClose(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        maxWidth="sm"
-      >
-        <DialogTitle id="alert-dialog-title">{'WARNING'}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {'Do you want to delete this moment?'}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleClose(false)} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={() => handleClose(true)} style={{color: 'red'}}>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        fullWidth={true}
-        open={forwardBoxOpen}
-        onClose={() => handleForwardClose(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        maxWidth="sm"
-      >
-        <DialogTitle id="alert-dialog-title">{'MOMENT FORWARD'}</DialogTitle>
-        <DialogContent>
-          <TextField
-            align="center"
-            className={classes.forward_textarea}
-            inputRef={inputRef}
-            id="forward_moment_textarea"
-            rows={5}
-            label="Forward a moment..."
-            placeholder="What's happening?"
-            multiline
-            variant="outlined"
-          />
-        </DialogContent>
-        <DialogActions>
-          <IconButton
-            aria-label="insert a emoji"
-            onClick={() => setEmojiExpand(!emojiExpand)}
-            aria-expanded={emojiExpand}
-            style={{marginRight: 'auto'}}
-          >
-            <EmojiEmotionsIcon />
-          </IconButton>
-          <Button color="primary">Cancel</Button>
-          <Button color="primary">Forward</Button>
-        </DialogActions>
-        <Collapse in={emojiExpand}>
-          <EmojiPicker node={inputRef.current} />
-        </Collapse>
-      </Dialog>
     </>
   );
 }

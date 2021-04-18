@@ -3,6 +3,7 @@ import Picker from 'emoji-picker-react';
 
 export default function EmojiPicker(props) {
   const onEmojiClick = (event, emojiObject) => {
+    console.log(props.node);
     if (props.node) {
       let start_pos = props.node.selectionStart;
       let prev_part =
