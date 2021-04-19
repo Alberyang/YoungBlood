@@ -96,20 +96,27 @@ class Moment extends Component {
       const response = this.fetchMoments('False');
       response.then(
         (res) => {
-          this.setState({
-            snackbar: (
-              <MsgBar
-                msg="Successfully refreshed new moments!"
-                severity="success"
-              />
-            ),
-          });
-          setTimeout(() => this.setState({snackbar: undefined}), 5 * 1000);
-          if (this.state.moments) {
-            this.state.moments.push(...res.data.data);
-            this.setState({moments: this.state.moments});
+          if (res.data.data) {
+            this.setState({
+              snackbar: (
+                <MsgBar
+                  msg="Successfully refreshed new moments!"
+                  severity="success"
+                />
+              ),
+            });
+            setTimeout(() => this.setState({snackbar: undefined}), 5 * 1000);
+            if (this.state.moments) {
+              this.state.moments.push(...res.data.data);
+              this.setState({moments: this.state.moments});
+            } else {
+              this.setState({moments: res.data.data});
+            }
           } else {
-            this.setState({moments: res.data.data});
+            this.setState({
+              snackbar: <MsgBar msg="No more new moments!" severity="error" />,
+            });
+            setTimeout(() => this.setState({snackbar: undefined}), 5 * 1000);
           }
         },
         (error) => {

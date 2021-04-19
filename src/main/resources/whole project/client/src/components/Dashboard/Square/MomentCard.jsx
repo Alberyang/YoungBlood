@@ -93,7 +93,6 @@ export default function MomentCard(props) {
   const [forwardBoxOpen, setForwardBox] = React.useState(false);
   const [emojiExpand, setEmojiExpand] = React.useState(false);
   const [currentPage, setPage] = React.useState(1);
-  const [forwardMoment, setForwardMoment] = React.useState(undefined);
 
   React.useEffect(() => {
     const response = getAvatar();
@@ -105,9 +104,6 @@ export default function MomentCard(props) {
         );
       }
     });
-    if (props.moment.hasOwnProperty('isShare') && props.moment.isShare) {
-      getOriginalMoment(props.moment.ori_info.id);
-    }
   }, []);
 
   let likeBtn =
@@ -216,15 +212,6 @@ export default function MomentCard(props) {
     setDialogOpen(true);
   };
 
-  const getOriginalMoment = async (moment_id) => {
-    const response = await axios
-      .get(`http://121.4.57.204:8080/info/detail/${moment_id}`)
-      .then((res) => {
-        setForwardMoment(res.data.data);
-      });
-    return response;
-  };
-
   const onEmojiClick = (event, emojiObject) => {
     if (inputRef.current) {
       let start_pos = inputRef.current.selectionStart;
@@ -256,17 +243,10 @@ export default function MomentCard(props) {
     }
   };
 
-  const fetchNewMoment = async (moment_id) => {
-    const response = await axios.get(
-      `http://121.4.57.204:8080/info/detail/${moment_id}`
-    );
-    return response;
-  };
-
   const postForwardMoment = async (data) => {
     const formData = new FormData();
     formData.append('contents', data.contents);
-    formData.append('infoid', data.infoid);
+    formData.append('infoId', data.infoId);
     const response = await axios
       .post(
         'http://121.4.57.204:8080/info/share/606c453064ad461348e31a23',
@@ -277,13 +257,11 @@ export default function MomentCard(props) {
           <MsgBar msg="Successfully forward a moment!" severity="success" />
         );
         setTimeout(() => setSnackbar(undefined), 3 * 1000);
-        fetchNewMoment(res.data.data).then((res) => {
-          let newMoment = res.data.data;
-          props.momentList.unshift(newMoment);
-          props.updateMoments(props.momentList);
-          props.updateView(true);
-          props.updateView(false);
-        });
+        let newMoment = res.data.data;
+        props.momentList.unshift(newMoment);
+        props.updateMoments(props.momentList);
+        updateView(true);
+        updateView(false);
       });
     return response;
   };
@@ -295,14 +273,15 @@ export default function MomentCard(props) {
       setTimeout(() => setSnackbar(undefined), 3 * 1000);
       return;
     }
-    let infoid =
+    let infoId =
       props.moment.hasOwnProperty('ori_info') && props.moment.ori_info
         ? props.moment.ori_info.id
         : props.moment.id;
     let momentData = {
       contents: text,
-      infoid: infoid,
+      infoId: infoId,
     };
+    setForwardBox(false);
     postForwardMoment(momentData);
   };
 
@@ -350,7 +329,9 @@ export default function MomentCard(props) {
           style={{display: 'flex', flexWrap: 'wrap', flexDirection: 'column'}}
         >
           {photodata}
-          {forwardMoment ? <ForwardCard moment={forwardMoment} /> : undefined}
+          {props.moment.isShare ? (
+            <ForwardCard moment={props.moment.ori_info} />
+          ) : undefined}
           <CardActions align="left">
             <IconButton aria-label="add to favorites" onClick={publicLike}>
               {likeBtn}
@@ -367,9 +348,7 @@ export default function MomentCard(props) {
             <IconButton aria-label="share" onClick={() => setForwardBox(true)}>
               <ShareIcon />
             </IconButton>
-            {props.moment.hasOwnProperty('forwards')
-              ? props.moment.forwards.length
-              : 0}
+            {props.moment.hasOwnProperty('shares') ? props.moment.shares : 0}
           </CardActions>
           <Collapse in={expanded} timeout="auto" unmountOnExit>
             <CardContent>

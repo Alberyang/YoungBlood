@@ -112,7 +112,7 @@ export default function MomentCard(props) {
   };
 
   let photodata = undefined;
-  if (props.moment.images.length > 0) {
+  if (props.moment.hasImage) {
     let photos = props.moment.images.map(getPhoto);
     photodata = (
       <CardMedia className={classes.moment_img}>
