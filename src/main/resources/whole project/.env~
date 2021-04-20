@@ -1,5 +1,0 @@
-NODE_ENV=development
-DATABASE="mongodb+srv://macro:12345@cluster0-gbsk9.mongodb.net/micro?retryWrites=true&w=majority"
-SECRET="web-it"
-SENDGRID_API_KEY="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"
-FROM_EMAIL="luuh@student.unimelb.edu.au"
