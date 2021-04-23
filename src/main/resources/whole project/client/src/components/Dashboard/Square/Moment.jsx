@@ -140,31 +140,6 @@ class Moment extends Component {
   componentDidMount() {
     const response = this.fetchMoments('True');
     response.then((res) => {
-      // console.log(res.data.data);
-      // let mockForwardMoment = {
-      //   contents: 'Forwarded moment test.',
-      //   createDate: 1618658335,
-      //   hasImage: false,
-      //   id: '12345',
-      //   images: null,
-      //   like: [],
-      //   user: '606c453064ad461348e31a23',
-      //   username: 'hikari',
-      //   isShare: true,
-      //   ori_info: {
-      //     id: '6078e66250d64e074bfa9302',
-      //   },
-      //   comments: [],
-      //   forwards: [
-      //     {
-      //       user: '606c453064ad461348e31a23',
-      //       createDate: 1618658800,
-      //       contents: 'test test',
-      //       username: 'hikari',
-      //     },
-      //   ],
-      // };
-      // res.data.data.unshift(mockForwardMoment);
       this.setState({moments: res.data.data});
     });
     window.addEventListener('scroll', this.handleScroll);
@@ -258,7 +233,7 @@ class Moment extends Component {
           <br />
           <br />
           <Typography variant="h1" className={classes.heading}>
-            Square
+            Moments
           </Typography>
         </div>
         <Tabs

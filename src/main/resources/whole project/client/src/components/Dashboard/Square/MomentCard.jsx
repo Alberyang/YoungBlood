@@ -33,6 +33,7 @@ import Picker from 'emoji-picker-react';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import Pagination from '@material-ui/lab/Pagination';
 import ForwardCard from './ForwardCard';
+import {connectAdvanced} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,7 +70,6 @@ export default function MomentCard(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [comments, updateComments] = React.useState(props.moment.comments);
-  const [likeNumber, setLikeNumber] = React.useState(props.moment.like.length);
   const [likeState, setLike] = React.useState(
     props.moment.like.indexOf(props.user.user._id) === -1 ? 'disliked' : 'liked'
   );
@@ -107,7 +107,7 @@ export default function MomentCard(props) {
   }, []);
 
   let likeBtn =
-    likeState === 'disliked' ? (
+    props.moment.like.indexOf(props.user.user._id) === -1 ? (
       <FavoriteIcon />
     ) : (
       <FavoriteIcon style={{color: 'red'}} />
@@ -179,10 +179,18 @@ export default function MomentCard(props) {
       )
       .then((res) => {
         setLike(data.operation + 'd');
-
-        setLikeNumber(
-          data.operation === 'dislike' ? likeNumber - 1 : likeNumber + 1
+        let momentIndex = props.momentList.findIndex(
+          (item) => item.id === props.moment.id
         );
+        if (data.operation === 'like') {
+          props.momentList[momentIndex].like.push(props.user.user._id);
+        } else {
+          let likeId = props.momentList[momentIndex].like.indexOf(
+            props.user.user._id
+          );
+          props.momentList[momentIndex].like.splice(likeId, 1);
+        }
+        props.updateMoments(props.momentList);
       });
     return response;
   };
@@ -260,8 +268,6 @@ export default function MomentCard(props) {
         let newMoment = res.data.data;
         props.momentList.unshift(newMoment);
         props.updateMoments(props.momentList);
-        updateView(true);
-        updateView(false);
       });
     return response;
   };
@@ -336,7 +342,7 @@ export default function MomentCard(props) {
             <IconButton aria-label="add to favorites" onClick={publicLike}>
               {likeBtn}
             </IconButton>
-            {likeNumber}
+            {props.moment.like.length}
             <IconButton
               onClick={handleExpandClick}
               aria-expanded={expanded}
@@ -344,7 +350,7 @@ export default function MomentCard(props) {
             >
               <MessageIcon />
             </IconButton>
-            {comments.length}
+            {props.moment.comments.length}
             <IconButton aria-label="share" onClick={() => setForwardBox(true)}>
               <ShareIcon />
             </IconButton>
@@ -352,27 +358,26 @@ export default function MomentCard(props) {
           </CardActions>
           <Collapse in={expanded} timeout="auto" unmountOnExit>
             <CardContent>
-              <themeContext.Provider
-                value={{comments, updateComments, updateView}}
-              >
-                {comments.map((comment, index) => {
+              <themeContext.Provider value={{updateComments, updateView}}>
+                {props.moment.comments.map((comment, index) => {
                   return index >= (currentPage - 1) * 4 &&
                     index < currentPage * 4 ? (
                     <React.Fragment key={index}>
                       <CommentCard
                         moment_id={props.moment.id}
                         comment={comment}
+                        comments={props.moment.comments}
                       />
                       <Divider variant="middle" />
                     </React.Fragment>
                   ) : undefined;
                 })}
 
-                {Math.ceil(comments.length / 4) > 1 ? (
+                {Math.ceil(props.moment.comments.length / 4) > 1 ? (
                   <Pagination
                     color="primary"
                     style={{marginTop: '20px', display: 'inline-block'}}
-                    count={Math.ceil(comments.length / 4)}
+                    count={Math.ceil(props.moment.comments.length / 4)}
                     onChange={pageChange}
                     showFirstButton
                     showLastButton
@@ -381,7 +386,8 @@ export default function MomentCard(props) {
 
                 <CommentBox
                   moment_id={props.moment.id}
-                  comments={comments}
+                  comments={props.moment.comments}
+                  setExpanded={setExpanded}
                   updateComments={updateComments}
                   updateView={updateView}
                 />

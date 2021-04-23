@@ -67,7 +67,7 @@ export default function CommentCard(props) {
     return response;
   };
 
-  const {updateComments, comments, updateView} = React.useContext(themeContext);
+  const {updateComments, updateView} = React.useContext(themeContext);
 
   React.useEffect(() => {
     const response = getAvatar();
@@ -86,15 +86,15 @@ export default function CommentCard(props) {
         );
         setTimeout(() => setSnackbar(undefined), 5 * 1000);
         let index = 0;
-        for (let key in comments) {
-          if (comments[key].id === comment_id) {
+        for (let key in props.comments) {
+          if (props.comments[key].id === comment_id) {
             index = key;
             break;
           }
         }
-        comments.splice(index, 1);
+        props.comments.splice(index, 1);
         // shallow copy and force update
-        updateComments(comments);
+        updateComments(props.comments);
         updateView(1);
         updateView(0);
       });

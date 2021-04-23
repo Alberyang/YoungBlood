@@ -107,6 +107,7 @@ class MomentBox extends Component {
       .post('http://121.4.57.204:8080/info/606c453064ad461348e31a23', formData)
       .then((res) => {
         this.postMomentSuccess();
+        this.divRerf.current.value = '';
         let newMoment = res.data.data;
         this.props.moments.unshift(newMoment);
         this.props.updateMoments(this.props.moments);

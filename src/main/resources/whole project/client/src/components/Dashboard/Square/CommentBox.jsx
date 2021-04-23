@@ -58,6 +58,16 @@ class CommentBox extends Component {
     });
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.moment_id !== nextProps.moment_id) {
+      if (this.divRerf.current) {
+        this.divRerf.current.value = '';
+      }
+      this.props.setExpanded(false);
+    }
+    return true;
+  }
+
   async postComment(data, moment_id) {
     const response = await axios
       .post(
@@ -131,6 +141,16 @@ class CommentBox extends Component {
             >
               <EmojiEmotionsIcon />
             </IconButton>
+            <Button
+              className={classes.box_submitbtn}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                console.log(this.props.moment_id);
+              }}
+            >
+              Test
+            </Button>
             <Button
               className={classes.box_submitbtn}
               variant="contained"
