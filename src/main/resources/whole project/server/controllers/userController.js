@@ -112,6 +112,26 @@ const signUpUser = (req, res, next) => {
   user.graduation = req.body.user.graduation;
   user.setPassword(req.body.user.password);
 
+  var axios = require('axios');
+  var data = {
+    "username": req.body.user.email,
+    "secret": req.body.user.password,
+    "first_name": req.body.user.firstname,
+    "last_name": req.body.user.lastname,
+  };
+
+  axios.post(
+    'https://api.chatengine.io/users/',
+    data,
+    { headers: { "private-key": "4b6f1b9c-ba24-43eb-af16-4a773a5d15fe" }}
+  )
+  .then(function (response) {
+    console.log(JSON.stringify(response.data));
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+
   user
     .save()
     .then(function () {

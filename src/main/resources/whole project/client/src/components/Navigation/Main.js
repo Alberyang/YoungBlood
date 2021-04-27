@@ -33,7 +33,7 @@ import ViewProjectItem from "../View/ViewProjectItem";
 // Import Square page
 import Square from "../Dashboard/Square/Moment";
 // Import Chat page
-import Chat from "../Dashboard/Chat/App";
+import Chat from "../Dashboard/Chat/Chat";
 
 class Main extends Component {
   render() {
