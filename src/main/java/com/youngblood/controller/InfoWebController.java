@@ -36,7 +36,7 @@ public class InfoWebController {
         ResponseContent responseContent = new ResponseContent();
         responseContent.setData(result);
         if(result.size()==0){
-            throw new YoungBloodException(EnumYoungBloodException.NEW_INFO_CANNOT_BE_FOUND);
+            throw new YoungBloodException(EnumYoungBloodException.MSG_NOTHING_NEW);
         }
         responseContent.setCode(200);
         responseContent.setMsg("load infos successfully");
@@ -63,7 +63,20 @@ public class InfoWebController {
         if(multipartFile==null) info.setHasImage(false);
         else info.setHasImage(true);
         String infoId = infoService.saveInfo(info, userId,multipartFile);
-        return ResponseEntity.status(200).body(new ResponseContent(200,infoId,"success~"));
+        Info newInfo = infoService.findInfoById(infoId);
+        return ResponseEntity.status(200).body(new ResponseContent(200,newInfo,"success~"));
+    }
+
+    //转发信息
+    @PostMapping("/share/{userId}")
+    //@RequestBody Info info,
+    public ResponseEntity<ResponseContent> shareInfo(@RequestParam("contents") String contents,
+                                                   @PathVariable("userId") String userId,
+                                                     @RequestParam("infoId")String infoId){
+
+        String new_infoId = infoService.shareInfo(contents, userId, infoId);
+        Info newInfo = infoService.findInfoById(new_infoId);
+        return ResponseEntity.status(200).body(new ResponseContent(200,newInfo,"success~"));
     }
     //删除动态信息
     @DeleteMapping("{infoId}")

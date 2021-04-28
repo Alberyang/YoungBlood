@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public enum  EnumYoungBloodException {
     MSG_ADDED_ERROR(500,"Error from adding a new message"),
+    MSG_NOTHING_NEW(200,"There is nothing new message"),
     MSG_LIKE_ERROR(500,"Error from liking "),
     MSG_COLLECT_ERROR(500,"Error from collecting"),
     NEW_INFO_CANNOT_BE_FOUND(400,"Info can't be found"),
@@ -18,6 +19,7 @@ public enum  EnumYoungBloodException {
     MSG_COLLECT_HISTORY_ERROR(500,"Error from getting the collect history"),
     MSG_DELETED_ERROR(500,"Error from deleting the info"),
     MSG_UPDATED_ERROR(500,"Error from updating the info"),
+    MSG_SHARE_NOT_FOUND(404,"The original info is not found"),
     REVIEW_CANNOT_BE_FOUND(400,"Review cannot be found"),
     REVIEW_ADDED_ERROR(500,"Review added error"),
     REVIEW_DELETED_ERROR(500,"Review deleted error"),

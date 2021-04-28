@@ -41,7 +41,10 @@ public class InfoServiceImpl implements InfoService {
     private InfoReviewDao infoReviewDao;
     @Autowired
     private PictureServiceImpl pictureService;
-
+    @Autowired
+    private UserDao userDao;
+    @Autowired
+    private MongoTemplate mongoTemplate;
     @Override
     public List<Info> getHeatInfos(String userId, boolean isRefresh) {
         List<Info> infos = new ArrayList<>();
@@ -82,6 +85,7 @@ public class InfoServiceImpl implements InfoService {
             info.setThumbs(nums);
             info.setLike(users);
             info.setComments(comments);
+            info.setShares(redisUtil.sSize("micro:share:"+info.getUser()+":"+info.getId()));
         }
         return infos;
     }
@@ -89,6 +93,9 @@ public class InfoServiceImpl implements InfoService {
     @Override
     public Info findInfoById(String id) {
         Info info = infoDao.findById(id);
+        if(info==null){
+            throw new YoungBloodException(EnumYoungBloodException.MSG_SHARE_NOT_FOUND);
+        }
         Set<String> users = redisUtil.setMembers("micro:like:" + info.getId());
         int nums = users.size();
         redisUtil.incrBy("micro:view:"+info.getId(),1);
@@ -97,6 +104,7 @@ public class InfoServiceImpl implements InfoService {
         info.setThumbs(nums);
         info.setLike(users);
         info.setComments(comments);
+        info.setShares(redisUtil.sSize("micro:share:"+info.getUser()+":"+info.getId()));
         return info;
     }
 
@@ -106,12 +114,40 @@ public class InfoServiceImpl implements InfoService {
             List<String> urls = pictureService.saveObjectsStream(multipartFile);
             info.setImages(urls);
         }
+        info.setIsShare(false);
+        info.setOri_info(null);
         String infoId = infoDao.saveInfo(info, userId);
         //后续更新异常处理
         if(infoId==null){
             throw new YoungBloodException(EnumYoungBloodException.MSG_ADDED_ERROR);
         }
         return infoId;
+    }
+
+    @Override
+    public String shareInfo(String contents, String userId, String ori_id) {
+        Info ori_info = this.findInfoById(ori_id);
+        if(ori_info==null){
+            throw new YoungBloodException(EnumYoungBloodException.MSG_SHARE_NOT_FOUND);
+        }
+        User user = userDao.findByUserId(userId);
+        Info info = new Info();
+        info.setOri_info(ori_info);
+        info.setIsShare(true);
+        info.setHasImage(false);
+        Long startDate = new Date().getTime()/1000;
+        info.setUser(user.getId());
+        info.setUsername(user.getUsername());
+        info.setCreateDate(startDate);
+        info.setUpdateDate(startDate);
+        info.setViews(0);
+        info.setReviews(0);
+        info.setThumbs(0);
+        info.setShares(0L);
+        info.setContents(contents);
+        redisUtil.sAdd("micro:share:"+ori_info.getUser()+":"+ori_info.getId(),userId);
+        Info newInfo = mongoTemplate.save(info, "info");
+        return newInfo.getId();
     }
 
 
