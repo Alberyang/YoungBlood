@@ -295,4 +295,7 @@ Review {
    'infoId': ID of that info
 }
 ```
-
+## System Architecture
+<p align="center">
+    <img src="ui/arch-design.png" alt="arch" width="400"/>
+</p>
