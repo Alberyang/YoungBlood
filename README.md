@@ -295,7 +295,47 @@ Review {
    'infoId': ID of that info
 }
 ```
+
+## Branches and Changelog
+| Commit Time| Commit Code	                           | User Story ID| User Stories                    |
+|------------|-----------------------------------------|--------------|--------------------------------------------------------------------------|
+| 1-Apr-21   | 7099d8c82088bd275a5f124c33fd92edde7eeebf| 22           | As a user, I want to publish my tweets including interesting emojis.
+| 6-Apr-21   | 85f77c217f6402b90412eabdf2f0d18d9f1a05aa| 2            | As a user, I want to like the tweets of the official account.
+| 6-Apr-21   | 85f77c217f6402b90412eabdf2f0d18d9f1a05aa| 3            | As a user, I want to cancel the like of the tweets of the official account.
+| 6-Apr-21   | 85f77c217f6402b90412eabdf2f0d18d9f1a05aa| 10           | As a user, I want to like the tweets of a non-official account (individual person's tweets).
+| 6-Apr-21   | 85f77c217f6402b90412eabdf2f0d18d9f1a05aa| 11           | As a user, I want to cancel the like of the tweets of a non-official account (individual person's tweets).
+| 7-Apr-21   | 429848838d27d6f0fb1665ac78f4c2276c42d302| 4            | As a user, I want to comment on the tweets of the official account.
+| 7-Apr-21   | 429848838d27d6f0fb1665ac78f4c2276c42d302| 12           | As a user, I want to comment on the tweets of a non-official account (individual person's tweets).
+| 7-Apr-21   | 429848838d27d6f0fb1665ac78f4c2276c42d302| 18           |	As a user, I want to publish my plain-text tweets.
+| 7-Apr-21   | 429848838d27d6f0fb1665ac78f4c2276c42d302| 19           |	As a user, I want to publish my picture tweets.
+| 7-Apr-21   | 429848838d27d6f0fb1665ac78f4c2276c42d302| 20           | As a user, I want to publish my tweets including plain text and pictures.
+| 9-Apr-21   | 896c7846b006115ac30045da02001f538a95cd7f| 1            | As a user,  I want to browse the tweets of the official account.
+| 9-Apr-21   | 896c7846b006115ac30045da02001f538a95cd7f| 5            | As a user, I want to delete my comment
+| 9-Apr-21   | 896c7846b006115ac30045da02001f538a95cd7f| 9            |	As a user, I want to browse the tweets of a non-official account (individual person's tweets).
+| 9-Apr-21   | 896c7846b006115ac30045da02001f538a95cd7f| 13           |	As a user, I want to delete my comment
+| 9-Apr-21   | 896c7846b006115ac30045da02001f538a95cd7f| 21           |	As a user, after I having selected the pics I do not want to upload, I want to delete those pics before I posting this tweets.
+| 9-Apr-21   | 896c7846b006115ac30045da02001f538a95cd7f| 23           | As a user, I want to delete my tweets
+| 19-Apr-21  | 5a2f45cb700e7dafbf0543ed278337da653bb7b7| 6            |	As a user, I want to share the tweets of the official account.
+| 19-Apr-21  | 5a2f45cb700e7dafbf0543ed278337da653bb7b7| 7            | As a user, I want to delete my sharing of the tweets of the official account.
+| 19-Apr-21  | 5a2f45cb700e7dafbf0543ed278337da653bb7b7| 8            |	As a user, I want to share the tweets of my following person to a Third-party platform (Facebook/Wechat, etc).
+| 19-Apr-21  | 5a2f45cb700e7dafbf0543ed278337da653bb7b7| 15           |	As a user, I want to share the ttweets of a non-official account (individual person's tweets).
+| 19-Apr-21  | 5a2f45cb700e7dafbf0543ed278337da653bb7b7| 16           |	As a user, I want to delete my sharing of the tweets of a non-official account (individual person's tweets).
+| 19-Apr-21  | 5a2f45cb700e7dafbf0543ed278337da653bb7b7| 17           |	As a user, I want to share the tweets of a non-following person to a Third-party platform (Facebook/Wechat, etc).
+
 ## System Architecture
 <p align="center">
-    <img src="ui/arch-design.png" alt="arch" width="400"/>
+    <img src="ui/arch-design.png" alt="arch" width="800"/>
 </p>
+
+## Maintainers
+| Name        | Email                          | Role              | High-Level Responsibilities                                                             |
+|-------------|--------------------------------|-------------------|-----------------------------------------------------------------------------------------|
+| Wentao Hao  | haowh@student.unimelb.edu.au   | Backend Developer | API generation & Backend logic design & Documentation                                   |
+| Yuayang Wang| yuyawang@student.unimelb.edu.au| Frontend Developer| Database design & API generation & Backend logic design                                 |
+| Wenyu Xie   | xiwx@student.unimelb.edu.au    | Scrum Master      | Designing product architecture and function & Designing UE and UI & Frontend programming|
+| Yichao Xu   | yichaox@student.unimelb.edu.au | Frontend Developer| Designing UI and adding new features & Frontend programming & Documentation             |
+| Tianyi Zheng| zhetz@student.unimelb.edu.au   | Backend Developer | Database design & Backend developing & Arrange tasks based on user stories              |
+
+## License
+All rights reserved to program participants and the University of Melbourne.
+
