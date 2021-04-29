@@ -29,40 +29,40 @@ Install Docker through this link (https://www.docker.com/get-started)
 MongoDB is a source-available cross-platform document-oriented database program. The system will use docker to deploy this service, so please make sure the docker has been installed before installing MongoDB.
 1. Pull the MongoDB image from the official repository.
 ```
-> docker pull mongodb
+docker pull mongodb
 ```
 2. Pull the MongoDB image from the official repository.
 ```
-> # Database file storage location
-> dbpath = /data/db
-> # Log file storage location
-> logpath = /data/log/mongod.log
-> # Use append to write log
-> logappend = true
-> # Whether to run as a daemon
-> # fork = true
-> # All ips can be accessed during the development stage, and need to be modified to the designated ip to access during the process stage
-> bind_ip = 0.0.0.0
-> # Set the port number
-> port = 27017
-> # Whether to enable authentication
-> auth = true
-> # Set the size of oplog (MB)
-> loplogSize=2048
-> # Turn on password authorization
-> security.authorization=enabled
+# Database file storage location
+dbpath = /data/db
+# Log file storage location
+logpath = /data/log/mongod.log
+# Use append to write log
+logappend = true
+# Whether to run as a daemon
+# fork = true
+# All ips can be accessed during the development stage, and need to be modified to the designated ip to access during the process stage
+bind_ip = 0.0.0.0
+# Set the port number
+port = 27017
+# Whether to enable authentication
+auth = true
+# Set the size of oplog (MB)
+loplogSize=2048
+# Turn on password authorization
+security.authorization=enabled
 ```
 3. Execution of commands.
 ```
-> docker run --name mongodb-new -v /home/mongodb/data:/data/db -v /home/mongodb/conf/mongod.conf:/data/configdb/mongod.conf -p 27017:27017 -d mongo --auth
+docker run --name mongodb-new -v /home/mongodb/data:/data/db -v /home/mongodb/conf/mongod.conf:/data/configdb/mongod.conf -p 27017:27017 -d mongo --auth
 ```
 4. Check connection and data by using the MongoDBCompass tool.
 5. Modify the configuration file in Springboot.
 ```
-> spring:
-  data:
-    mongodb:
-      uri: mongodb://<username>:<password>@<server host address>:27017
-      database: micro
-      authentication-database: admin
+spring:
+   data:
+      mongodb:
+         uri: mongodb://<username>:<password>@<server host address>:27017
+         database: micro
+         authentication-database: admin
 ```
