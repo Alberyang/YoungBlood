@@ -200,3 +200,99 @@ The original project API can be accessed through this link (https://github.com/T
 | Moments-like       | /info/dislike/{userId}/{momentId}      |                    |                | POST      | Dislike a moment by user                  |
 | Moments-like | /info/likelog/{userId}/{page}/{limit} | page & limit | String & String | GET | Get the moment the user has liked |
 | Moments-like | /info/likeornot/{userId}/{momentId} |  |  | GET | Check whether the user likes or not the moment |
+
+### MongoDB Schemas
+The original project MongoDB Schemas can be accessed through this link (https://github.com/Taylorrrr/COMP30022-Microhard).
+```
+User {
+   `ID`: User ID;
+   `Username`: Name of user;
+   `Email`: Email address;
+   `Headline`: Short description of user;
+   `Image`: Profile picture;
+   `Password`: Secure authentication;
+   `Lastname`: Lastname of user;
+   `Firstname`: Firstname of user;
+   `Major`: Major of user;
+   `aboutSection`: About Me section;
+   `Location`: Where the user is based in at the current time;
+   `Website`: (Optional) Website contact;
+   `Linkedin`: (Optional) Linkedin contact;
+}
+
+Image {
+   'fileId': Image ID;
+   'user': Ownership of images;
+}
+
+Pdf {
+   'fileId': Pdf ID;
+   'user': Ownership of pdfs;
+}
+
+Project {
+   'projectId': Project ID;
+   'user': Ownership of pdfs;
+   'name': Project's name;
+   'description': Project's description;
+   'status': Project's progress-status (In Progress/Complete/Cancel);
+   'show_status': Project's show-status (Public/Private);
+   'contributors': List of contributors;
+   'skills': List of skills tag that relevant to the project;
+   'rating': Number of people give like to the project;
+   'process': The process list will describing the project' progression and tasks involved, consist of ProcessId, process's description and tasks list (nodes);
+   'nodes': The tasks list belong to certain process, consist of NodeId and description;
+   'timeline': The timeline listed down important events of project;
+}
+
+Experience {
+   'experienceID': Experience ID
+   'user': Ownership of experiences
+   'start_date': When the experience was started
+   'end_date': When the experience was ended
+   'position': Users position in the experience
+   'company': The company of the experience
+   'description': Experience description
+   'state': Experience's status (On going/End)
+}
+
+Course {
+   'user': Ownnership of course
+   'code': Course code
+   'name': Name of the course
+   'description': Course description
+   'state': Course's status (Finished/On Going/Planned)
+   'grades': Course grade
+   'link': Link to course handbook
+   'year': Year course taken
+   'sem' : Semester course taken
+   'score': Rating of course
+}
+
+Info {
+   'contents': Content of info
+   'images': Array of images of the post
+   'username': User who posts
+   'user': ID of current user
+   'thumbs': Number of likes
+   'views': Number of views
+   'reviews': Number of reviews
+}
+
+Info_heat {
+   'heat': Level of heat of the post
+   'infoId': ID of that info
+}
+
+Info_snapshot {
+   'info': Object of info
+   'oriInfoId': ID of that info object
+}
+
+Review {
+   'content': Content of review
+   'user': owner of the current review
+   'infoId': ID of that info
+}
+```
+
