@@ -1,28 +1,25 @@
+server:
+  port: 8080
 http:
   port: 8080
-#spring:
-#  data:
-#    mongodb:
-#      uri: mongodb://root:wYY601237317@db.offercare.cn:27017
-#      database: offercare
-#      authentication-database: admin
-#    elasticearch:
-##      cluster-name: elasticsearch-cluster
-##      cluster-nodes: 111.229.206.228:9300
-#      repostiroties:
-#        enabled: true
-#  elasticsearch:
-#    rest:
-#      uris: http://111.229.206.228:9200
-#      connection-timeout: 30
-#      read-timeout: 20
-#heatinfo:
-#  view_weight: 1
-#  review_weight: 4
-#  thumb_weight: 2
-#  ucb_valueA: 10  # 不火的新帖子热度权重  // ucb算法思想：刚发布的帖子没有任何数值，应该explore，将热度置位一定值
-#  ucb_valueB: 15  # 暂时用不到
-#  return_nums: 10 # 一次请求返回给前端的帖子数量
-#  openId_outtime: 30 #分钟为单位 redis中openId每个人的浏览历史记录保存时间
-#  snapshot_del_time: 3600000 # snapshot表删除期限 默认删除3小时以前的数据 单位毫秒
+spring:
+  data:
+    mongodb:
+      uri: mongodb://root:wYY601237317@db.offercare.cn:27017
+      database: micro
+      authentication-database: admin
+  redis:
+    host: 111.229.206.228
+    port: 6379
+    timeout: 20000
+    password: wYY601237317
+heatinfo:
+  view_weight: 1
+  review_weight: 4
+  thumb_weight: 2
+  ucb_valueA: 10  # 不火的新帖子热度权重  // ucb算法思想：刚发布的帖子没有任何数值，应该explore，将热度置位一定值
+  ucb_valueB: 15  # 暂时用不到
+  return_nums: 10 # 一次请求返回给前端的帖子数量
+  userId_outtime: 30 #分钟为单位 redis中openId每个人的浏览历史记录保存时间
+  snapshot_del_time: 3600000 # snapshot表删除期限 默认删除3小时以前的数据 单位毫秒
 

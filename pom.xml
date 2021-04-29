@@ -32,6 +32,7 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
         <!--        测试工具-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -43,6 +44,12 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--        腾讯云对象存储jdk-->
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+            <version>5.6.24</version>
+        </dependency>
         <!--        json工具-->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -53,6 +60,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+        </dependency>
+        <!--  redis     -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
     </dependencies>
     <build>
