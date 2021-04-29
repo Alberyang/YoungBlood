@@ -66,3 +66,137 @@ spring:
          database: micro
          authentication-database: admin
 ```
+#### Redis(docker)
+Redis is an in-memory data structure store, used as a distributed, in-memory key–value database, cache and message broker, with optional durability. The system will use docker to deploy this service, so please make sure the docker has been installed before installing Redis.
+1. Pull the Redis image.
+```
+docker pull redis
+```
+2. Modify the configuration file.
+```
+a. copy the default configuration file and modify it on this basis. The link is ( https://raw.githubusercontent.com/antirez/redis/4.0/redis.conf );
+b. create a Redis file directory on the host containing conf and data, and bring in the configuration file;
+c. modify “appendonly” to yes to enable Redis persistence;
+d. default “daemonize=no” to start Redis in non-backend mode;
+e. turn on “protected-mode” yes;
+f. default port mapping 6379;
+g. change the password after requirepass to a strong password;
+```
+3. Execution of commands.
+```
+docker run -p 6379:6379 --name redis-dev -v /home/docker/redis/conf/redis.conf:/etc/redis/redis.conf -v /home/docker/redis/data:/data -d redis redis-server /etc/redis/redis.conf
+```
+4. Check connection by using the "redisdesktop" administration tool to test if you can connect properly.
+5. Modify the configuration file in Springboot.
+```
+spring:
+   redis:
+      host: <address>
+      port: 6379 <it should be same with corresponding Redis server's port>
+      timeout: 20000 <it could be changed according to your project requirement>
+      password: <password>
+```
+6. Enable docker service to restart containers automatically after restart
+```
+docker update --restart=always <CONTAINER ID>
+```
+
+### The original project installation
+#### Packages
+Once all the prerequisites have been satisfied, we can focus on the two packages: one for the client-side (/client) and another for the server-side (/server). These two packages have its own package.json files that stores their own dependencies.
+- **Client packages**: this package is focused on the frontend development. To install the dependencies, make sure to `cd` to the `client` directory before `npm install`. 
+- **Backend packages**: this package keeps all its necessary files in the root directory and the `server` directory. To install the necessary dependencies, we can `npm install` them to the root directory. 
+
+#### Package Installation
+1. Install Node.js and npm through this link (https://nodejs.org/en/download/) 
+2. Open the terminal window, from the root folder 
+```
+> npm install
+> cd client
+> npm install
+```
+3. Copy contents of .env.example and put it in a file called .env in both main folder and client folder
+4. Up to this point, this should be sufficient enough to run the local development environment. Open a new terminal and type in the following command.
+```
+> npm run dev
+```
+
+#### Setting up the environmental variables
+This `.env` configuration is located in the root directory:
+```
+NODE_ENV= <development | production>
+DATABASE="mongodb+srv://<your account: your password >@cluster0-gbsk9.mongodb.net/micro?retryWrites=true&w=majority"
+SECRET= <your JWT secret>
+SENDGRID_API_KEY= <your sendgrid api key>
+FROM_EMAIL= <email from address>
+```
+This particular `.env` configuration should be located in the client directory:
+```
+REACT_APP_API_ENDPOINT = <path to react api endpoint>
+API_MIDDLEWARE = <path to api middleware>
+```
+### The extended project installation
+1. Download the "src" file from the source code and modify the configuration file called "application.yml" in the resources folder. Here you could configure the server port, the parameters related to the post hotness mechanism, the database.
+```
+server:
+   port: 8080 # Modify the server port
+heatinfo: 
+   view_weight: 1 # Configure the weight value of the view count parameter
+   review_weight: 4 # Configure the weight value of the comment count parameter
+   thumb_weight: 2 # Configure the weight value of the number of likes parameter
+   ucb_valueA: 10  # Configure the hotness weight value for new posts 
+   ucb_valueB: 15  # The default value is recommended
+   return_nums: 10 # Number of posts returned to the front-end in one request
+   userId_outtime: 30 # Configure how long each user's browsing history is kept in Redis, in minutes
+   snapshot_del_time: 3600000 # Configure the deletion period of the data in the snapshot table, the default is to delete the data before 3 hours, in milliseconds
+spring:
+   data:
+      mongodb:
+         uri: mongodb://<username>:<password>@<server host address>:27017
+         database: micro
+         authentication-database: admin
+   redis:
+      host: <server address>
+      port: 6379
+      timeout: 20000
+      password: <password>
+```
+2. Use the Maven package tool to generate a jar package, and run this jar package. Run the command as follows. 
+```
+nohup java -jar YoungBlood-1.0-SNAPSHOT.jar > log.txt &
+```
+3. If you want to restart the project, you need to clear the previous project first, run the following command.
+```
+netstat -nlp|grep 8080
+kill -9 <processId>
+```
+4. Check if the server starts properly by checking the log files in "log.txt"
+
+## Usage
+After the project is launched, you can view the project page by entering the home page and start using all the functions by registering your user identity and logging into the project.
+```
+http://<server-host-address>:<port>
+```
+Our project demo has been deployed on the Tencent Cloud, so you can view it by using the following website link.
+```
+http://121.4.57.204:3000/
+Test login email: hotmail@com.cn
+Test password: By8853072$
+```
+### Restful API
+The original project API can be accessed through this link (https://github.com/Taylorrrr/COMP30022-Microhard).
+
+| Core Functionality | Request Method                         | Param              | ParamType      | HTTP Verb | Purpose                                   |
+|--------------------|----------------------------------------|--------------------|----------------|-----------|-------------------------------------------|
+| Moments            | /info/{userId}                         | isRefresh          | boolean        | GET       | Get moments with a high heat value        |
+| Moments            | /info/detail/{momentId}                |                    |                | GET       | Get one moment by using moment id         |
+| Moments            | /info/{userId}                         |                    |                | POST      | Post a new moment with userId             |
+| Moments            | /info/{userId}                         |                    |                | DELETE    | Delete a moment by using user id          | 
+| Moments-review     | /info/review/{momentId}/{page}/{limit} | page & limit       | String & String| GET       | Get all reviews about the moment          |
+| Moments-review     | /info/review/{momentId}/{userId}       |                    |                | POST      | Post a new review to the moment           | 
+| Moments-review     | /info/review/{reviewId}                |                    |                | DELETE    | Delete a review according to the review id|
+| Moments-share      | /info/share/{userId}                   | contents & momentId| String & String| POST      | Share a moment with userId and content    |
+| Moments-like       | /info/like/{userId}/{momentId}         |                    |                | POST      | Like a moment by user                     |
+| Moments-like       | /info/dislike/{userId}/{momentId}      |                    |                | POST      | Dislike a moment by user                  |
+| Moments-like | /info/likelog/{userId}/{page}/{limit} | page & limit | String & String | GET | Get the moment the user has liked |
+| Moments-like | /info/likeornot/{userId}/{momentId} |  |  | GET | Check whether the user likes or not the moment |
