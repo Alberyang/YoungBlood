@@ -1,39 +1,39 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { Route, Switch } from "react-router-dom";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Route, Switch} from 'react-router-dom';
 
-import PrivateRoute from "./PrivateRoute";
-import PrivateHome from "./PrivateHome";
-import Account from "../Account/Account";
-import SignIn from "../Account/SignIn";
-import ForgotPassword from "../Account/ForgotPassword";
-import ResetPassword from "../Account/ResetPassword";
-import Experience from "../Dashboard/Experience";
+import PrivateRoute from './PrivateRoute';
+import PrivateHome from './PrivateHome';
+import Account from '../Account/Account';
+import SignIn from '../Account/SignIn';
+import ForgotPassword from '../Account/ForgotPassword';
+import ResetPassword from '../Account/ResetPassword';
+import Experience from '../Dashboard/Experience';
 
 //import Image from '../Dashboard/Image';
 //import Project from '../Dashboard/Project/ProjectList';
-import Project from "../Dashboard/Project/ProjectList";
-import About from "../About/About";
+import Project from '../Dashboard/Project/ProjectList';
+import About from '../About/About';
 //import Project from '../Dashboard/Project/ProjectList_edit';
-import Project_Edit from "../Dashboard/Project/Project_Edit";
-import Project_View from "../Dashboard/Project/Project_View";
-import Image from "../Dashboard/Photos/Image";
-import Documents from "../Dashboard/Document/Documents";
-import AddProfileContent from "../Sign Up/AddProfileContent";
-import Course from "../Dashboard/Course/Course";
-import NoMatch from "../NoMatch";
-import View from "../View/view";
-import ViewImage from "../View/ViewImage";
-import ViewDocument from "../View/ViewDocument";
-import ViewExperience from "../View/ViewExperience";
-import ViewCourse from "../View/ViewCourse";
-import ViewProject from "../View/ViewProject";
-import ViewProjectItem from "../View/ViewProjectItem";
+import Project_Edit from '../Dashboard/Project/Project_Edit';
+import Project_View from '../Dashboard/Project/Project_View';
+import Image from '../Dashboard/Photos/Image';
+import Documents from '../Dashboard/Document/Documents';
+import AddProfileContent from '../Sign Up/AddProfileContent';
+import Course from '../Dashboard/Course/Course';
+import NoMatch from '../NoMatch';
+import View from '../View/view';
+import ViewImage from '../View/ViewImage';
+import ViewDocument from '../View/ViewDocument';
+import ViewExperience from '../View/ViewExperience';
+import ViewCourse from '../View/ViewCourse';
+import ViewProject from '../View/ViewProject';
+import ViewProjectItem from '../View/ViewProjectItem';
 
 // Import Square page
-import Square from "../Dashboard/Square/Moment";
+import Square from '../Dashboard/Square/Moment';
 // Import Chat page
-import Chat from "../Dashboard/Chat/Chat";
+import Chat from '../Dashboard/Chat/Chat';
 
 class Main extends Component {
   render() {
@@ -110,7 +110,7 @@ class Main extends Component {
         {/* New Code for square */}
         <PrivateRoute
           exact
-          path="/square"
+          path="/moments"
           component={Square}
           authed={this.props.user}
         />
@@ -129,5 +129,5 @@ class Main extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({ user: state.user.user });
+const mapStateToProps = (state) => ({user: state.user.user});
 export default connect(mapStateToProps)(Main);

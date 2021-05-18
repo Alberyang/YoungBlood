@@ -17,7 +17,6 @@ import MessageIcon from '@material-ui/icons/Message';
 import CloseIcon from '@material-ui/icons/Close';
 import Gallery from 'react-grid-gallery';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import MsgBar from './MessageBar';
 import axios from '../../../helpers/axiosConfig';
 
@@ -33,7 +32,6 @@ import Picker from 'emoji-picker-react';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import Pagination from '@material-ui/lab/Pagination';
 import ForwardCard from './ForwardCard';
-import {connectAdvanced} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {

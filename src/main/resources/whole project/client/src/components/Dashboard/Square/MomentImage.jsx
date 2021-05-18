@@ -154,6 +154,7 @@ class MomentImage extends React.Component {
                 color="primary"
                 size="small"
                 onClick={this.clearAll}
+                style={{marginRight: '10px'}}
               >
                 Clear All
               </Button>

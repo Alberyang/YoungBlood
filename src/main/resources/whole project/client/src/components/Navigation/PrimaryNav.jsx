@@ -1,44 +1,44 @@
 // Referenced https://github.com/dhruvmetha/Responsive-App-Bar
 
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { signOutUser } from "../../actions/userAction";
-import { Link } from "react-router-dom";
-import logo from "../../components/Navigation/logo.png";
-import withStyles from "@material-ui/core/styles/withStyles";
-import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import Popover from "@material-ui/core/Popover";
-import MenuItem from "@material-ui/core/MenuItem";
-import Toolbar from "@material-ui/core/Toolbar";
-import AppBar from "@material-ui/core/AppBar";
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Grid from "@material-ui/core/Grid";
-import MenuIcon from "@material-ui/icons/Menu";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {signOutUser} from '../../actions/userAction';
+import {Link} from 'react-router-dom';
+import logo from '../../components/Navigation/logo.png';
+import withStyles from '@material-ui/core/styles/withStyles';
+import PopupState, {bindPopover, bindTrigger} from 'material-ui-popup-state';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Popover from '@material-ui/core/Popover';
+import MenuItem from '@material-ui/core/MenuItem';
+import Toolbar from '@material-ui/core/Toolbar';
+import AppBar from '@material-ui/core/AppBar';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Grid from '@material-ui/core/Grid';
+import MenuIcon from '@material-ui/icons/Menu';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 const styles = (theme) => ({
   button: {
-    color: "grey",
-    margin: "0px 12px",
-    textTransform: "none",
+    color: 'grey',
+    margin: '0px 12px',
+    textTransform: 'none',
   },
   logo: {
-    maxHeight: "2.7rem",
-    padding: "0px 10px",
-    margin: "0px 15px",
+    maxHeight: '2.7rem',
+    padding: '0px 10px',
+    margin: '0px 15px',
   },
   buttonSection: {
-    flex: "1",
-    textAlign: "center",
-    marginLeft: "-43px",
+    flex: '1',
+    textAlign: 'center',
+    marginLeft: '-43px',
   },
   appbar: {
-    backgroundColor: "#F4F5F7",
-    color: "#000",
+    backgroundColor: '#F4F5F7',
+    color: '#000',
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -47,19 +47,19 @@ const styles = (theme) => ({
     flexGrow: 1,
   },
   noDecoration: {
-    textDecoration: "none !important",
+    textDecoration: 'none !important',
   },
   list: {
     width: 200,
   },
   padding: {
     paddingRight: 30,
-    cursor: "pointer",
+    cursor: 'pointer',
   },
   sideBarIcon: {
     padding: 0,
-    color: "black",
-    cursor: "pointer",
+    color: 'black',
+    cursor: 'pointer',
   },
   icon: {
     color: theme.palette.primary.main,
@@ -81,14 +81,14 @@ class PrimaryNav extends Component {
 
   componentWillMount() {
     if (window.innerWidth <= 900) {
-      this.setState({ drawerActivate: true });
+      this.setState({drawerActivate: true});
     }
 
-    window.addEventListener("resize", () => {
+    window.addEventListener('resize', () => {
       if (window.innerWidth <= 900) {
-        this.setState({ drawerActivate: true });
+        this.setState({drawerActivate: true});
       } else {
-        this.setState({ drawerActivate: false });
+        this.setState({drawerActivate: false});
       }
     });
   }
@@ -108,7 +108,7 @@ class PrimaryNav extends Component {
               <MenuIcon
                 className={this.props.classes.sideBarIcon}
                 onClick={() => {
-                  this.setState({ drawer: true });
+                  this.setState({drawer: true});
                 }}
               />
 
@@ -122,20 +122,20 @@ class PrimaryNav extends Component {
         <SwipeableDrawer
           open={this.state.drawer}
           onClose={() => {
-            this.setState({ drawer: false });
+            this.setState({drawer: false});
           }}
           onOpen={() => {
-            this.setState({ drawer: true });
+            this.setState({drawer: true});
           }}
         >
           <div
             tabIndex={0}
             role="button"
             onClick={() => {
-              this.setState({ drawer: false });
+              this.setState({drawer: false});
             }}
             onKeyDown={() => {
-              this.setState({ drawer: false });
+              this.setState({drawer: false});
             }}
           >
             <List className={this.props.classes.list}>
@@ -174,8 +174,8 @@ class PrimaryNav extends Component {
 
               {/* New code for square */}
               <ListItem key={10} button divider>
-                <Link to="/square" className={classes.noDecoration}>
-                  <Button className={classes.button}>Square</Button>
+                <Link to="/moments" className={classes.noDecoration}>
+                  <Button className={classes.button}>Moments</Button>
                 </Link>
               </ListItem>
 
@@ -234,8 +234,8 @@ class PrimaryNav extends Component {
             </Link>
 
             {/* New code for square */}
-            <Link to="/square" className={classes.noDecoration}>
-              <Button className={classes.button}>Square</Button>
+            <Link to="/moments" className={classes.noDecoration}>
+              <Button className={classes.button}>Moments</Button>
             </Link>
 
             {/* New code for chat */}
@@ -263,12 +263,12 @@ class PrimaryNav extends Component {
                   <Popover
                     {...bindPopover(popupState)}
                     anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "center",
+                      vertical: 'bottom',
+                      horizontal: 'center',
                     }}
                     transformOrigin={{
-                      vertical: "top",
-                      horizontal: "center",
+                      vertical: 'top',
+                      horizontal: 'center',
                     }}
                   >
                     <MenuItem component={Link} to="/account">
@@ -289,8 +289,8 @@ class PrimaryNav extends Component {
   }
 
   render() {
-    const { classes } = this.props;
-    const { user } = this.props.user;
+    const {classes} = this.props;
+    const {user} = this.props.user;
     let content;
 
     const signOut = (e) => {

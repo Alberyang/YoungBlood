@@ -27,7 +27,6 @@ const styles = {
     marginRight: 'auto',
   },
   box_submitbtn: {
-    textTransform: 'none',
     marginLeft: 'auto',
   },
 };
@@ -109,7 +108,7 @@ class CommentBox extends Component {
     let commentData = {
       contents: text,
     };
-    let response = this.postComment(commentData, this.state.moment_id);
+    this.postComment(commentData, this.state.moment_id);
   };
 
   render() {
@@ -145,16 +144,6 @@ class CommentBox extends Component {
               className={classes.box_submitbtn}
               variant="contained"
               color="primary"
-              onClick={() => {
-                console.log(this.props.moment_id);
-              }}
-            >
-              Test
-            </Button>
-            <Button
-              className={classes.box_submitbtn}
-              variant="contained"
-              color="primary"
               onClick={this.publicComment}
             >
               Comment
@@ -174,7 +163,7 @@ class CommentBox extends Component {
                   position: 'absolute',
                   zIndex: '3',
                   top: '0px',
-                  right: '0px',
+                  right: '5px',
                   background: 'transparent',
                   border: 'none',
                   fontSize: '3px',

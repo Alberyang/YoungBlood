@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Picker from 'emoji-picker-react';
 
 export default function EmojiPicker(props) {

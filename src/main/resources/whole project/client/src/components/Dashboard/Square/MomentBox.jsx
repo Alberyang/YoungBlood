@@ -24,7 +24,7 @@ import axios from '../../../helpers/axiosConfig';
 
 const styles = {
   box_card: {
-    margin: '20px',
+    marginBottom: '20px',
     height: '250px',
     width: '100%',
   },
@@ -33,7 +33,6 @@ const styles = {
     width: '90%',
   },
   box_submitbtn: {
-    textTransform: 'none',
     marginRight: '5%',
     marginLeft: 'auto',
   },
@@ -109,8 +108,13 @@ class MomentBox extends Component {
         this.postMomentSuccess();
         this.divRerf.current.value = '';
         let newMoment = res.data.data;
-        this.props.moments.unshift(newMoment);
-        this.props.updateMoments(this.props.moments);
+        if (this.props.moments) {
+          this.props.moments.unshift(newMoment);
+          this.props.updateMoments(this.props.moments);
+        } else {
+          this.props.updateMoments([newMoment]);
+        }
+
         this.props.updateView(true);
         this.props.updateView(false);
       });
@@ -184,7 +188,7 @@ class MomentBox extends Component {
                     position: 'absolute',
                     zIndex: '3',
                     top: '0px',
-                    right: '0px',
+                    right: '5px',
                     background: 'transparent',
                     border: 'none',
                     fontSize: '3px',
@@ -213,7 +217,7 @@ class MomentBox extends Component {
                     position: 'absolute',
                     zIndex: '3',
                     top: '0px',
-                    right: '0px',
+                    right: '5px',
                     background: 'transparent',
                     border: 'none',
                     fontSize: '3px',

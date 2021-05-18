@@ -31,7 +31,6 @@ const styles = (theme) => ({
     fontSize: '36px',
   },
   moments: {
-    marginLeft: '20px',
     width: '100%',
   },
 });
@@ -209,12 +208,6 @@ class Moment extends Component {
   }
   render() {
     const {classes} = this.props;
-    const mockFriends = [
-      {user_id: '123', username: 'Frank'},
-      {user_id: '234', username: 'Jack'},
-      {user_id: '333', username: 'Owen'},
-      {user_id: '444', username: 'Alan'},
-    ];
     let allView = this.generateView(undefined);
     let myView = this.generateView(this.props.user.user._id);
     let officialView = this.generateView('606c453064ad461348e31a23');
@@ -248,42 +241,9 @@ class Moment extends Component {
           <Tab label="My Moments" index={1} />
           <Tab label="Official Moments" index={2} />
         </Tabs>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-          }}
-        >
-          <div style={{width: '70%'}}>{demoView}</div>
-          <Card style={{width: '20%', marginTop: '20px', marginLeft: '50px'}}>
-            <CardContent>
-              <MenuList>
-                <h1>Contacts</h1>
-                {mockFriends.map((item, index) => {
-                  return (
-                    <div key={index}>
-                      <Divider />
-                      <MenuItem>
-                        {item.username}
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          size="small"
-                          style={{marginLeft: 'auto'}}
-                        >
-                          Message
-                        </Button>
-                      </MenuItem>
-                      <Divider />
-                    </div>
-                  );
-                })}
-              </MenuList>
-            </CardContent>
-          </Card>
-        </div>
+
+        <div style={{width: '80%'}}>{demoView}</div>
+
         <div style={{position: 'fixed', right: '20px', bottom: '20px'}}>
           <Fab
             color="primary"

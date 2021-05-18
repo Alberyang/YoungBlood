@@ -45,7 +45,7 @@ export default function CommentCard(props) {
       if (ret) {
         fmt = fmt.replace(
           ret[1],
-          ret[1].length == 1 ? opt[k] : opt[k].padStart(ret[1].length, '0')
+          ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, '0')
         );
       }
     }
