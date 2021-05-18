@@ -31,7 +31,7 @@ public class InfoHeatRefresh {
     @Autowired
     private RedisUtil redisUtil;
 
-    @Scheduled(fixedRate=30000)
+    @Scheduled(fixedRate=1800000)
     public void refreshSnapshot(){
         List<Info> all = infoService.findAll();
         List<InfoSnapshot> result = new ArrayList<>();
@@ -59,7 +59,7 @@ public class InfoHeatRefresh {
         }
     }
 
-    @Scheduled(fixedRate=30000)
+    @Scheduled(fixedRate=1800000)
     public void refreshHeat(){
         // 距现在的时间超过3小时即删除
         boolean flag = infoSnapshotDAO.deleteOutDate();
@@ -67,7 +67,7 @@ public class InfoHeatRefresh {
         else System.out.println("快照表旧数据删除异常，请查看日志");
     }
 
-    @Scheduled(fixedRate=30000)
+    @Scheduled(fixedRate=1800000)
     public void deleteOldSnapshot(){
         //清空当前热度表
         boolean dropFlag = infoHeatDAO.dropCollection();
@@ -102,7 +102,7 @@ public class InfoHeatRefresh {
         }
     }
 
-    @Scheduled(fixedRate=50000)
+    @Scheduled(fixedRate=2700000)
     //更新redis中的热度表
     public void refreshRedisHeatInfo(){
         redisUtil.delete("micro_allHeatInfo");
