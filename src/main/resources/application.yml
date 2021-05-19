@@ -11,8 +11,9 @@ spring:
   redis:
     host: 111.229.206.228
     port: 6379
-    timeout: 20000
+    timeout: 40000
     password: wYY601237317
+
 heatinfo:
   view_weight: 1
   review_weight: 4

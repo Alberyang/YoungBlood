@@ -1,19 +1,22 @@
 package com.youngblood.dao.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.youngblood.dao.InfoDao;
 import com.youngblood.dao.InfoReviewDao;
 import com.youngblood.dao.UserDao;
-import com.youngblood.entity.Info;
-import com.youngblood.entity.InfoHeat;
-import com.youngblood.entity.InfoSnapshot;
-import com.youngblood.entity.User;
+import com.youngblood.entity.*;
 import com.youngblood.enums.EnumYoungBloodException;
 import com.youngblood.exceptions.YoungBloodException;
 import com.youngblood.service.impl.PictureServiceImpl;
 import com.youngblood.utils.RedisUtil;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,8 +46,31 @@ public class InfoDaoImpl implements InfoDao {
 
     // just use this function for test
     @Override
-    public List<Info> findAll() {
-        return mongoTemplate.findAll(Info.class);
+    public Long findAllNums() {
+        Query query = new Query();
+        long nums = mongoTemplate.count(query, "info");
+        //遍历所有数据 --- 数据量过大造成堆内存溢出
+//        FindIterable<Document> infoList = mongoTemplate.getCollection("info").find();
+//        List<Info> result = new ArrayList<>();
+//        double i = 1.000;
+//        while(infoList.cursor().hasNext()){
+//            Document next = infoList.cursor().next();
+//            System.out.println("查表进度: "+ i/3000 + "%");
+//            i++;
+//            String info_json = next.toJson();
+//            result.add(JSON.parseObject(info_json,Info.class));
+//        }
+//        return result;
+        return nums;
+    }
+
+    @Override
+    public List<Info> findPageable(Integer page, Integer limit) {
+        Query query = new Query();
+        Pageable pageable = PageRequest.of(page,limit);
+        query.with(pageable);
+        List<Info> infos = mongoTemplate.find(query, Info.class);
+        return infos;
     }
 
     @Override

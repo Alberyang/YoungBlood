@@ -5,7 +5,8 @@ import com.youngblood.entity.Info;
 import java.util.List;
 
 public interface InfoDao {
-    List<Info> findAll();
+    Long findAllNums();
+    List<Info> findPageable(Integer page,Integer limit);
     Info findById(String id);
     List<Info> findByIds(String... ids);
     List<Info> findByIdsDateOrder(String... ids);

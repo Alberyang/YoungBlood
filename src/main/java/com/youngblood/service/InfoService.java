@@ -25,6 +25,5 @@ public interface InfoService {
     boolean collectAlreadyInfo(String userId, String infoId);
     List<Info> collectHistoryInfo(String userId,Integer page,Integer limit);
 
-    //just using it for test
-    List<Info> findAll();
+
 }

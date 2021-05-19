@@ -34,13 +34,6 @@ public class InfoReviewDaoImpl implements InfoReviewDao {
         query.with(pageable);
         query.with(Sort.by(Sort.Direction.DESC, "createDate"));
         List<InfoReview> infoReviews = mongoTemplate.find(query, InfoReview.class);
-//        Query query_count = new Query();
-//        query_count.addCriteria(Criteria.where("infoId").is(infoId));
-//        long reviewNum = mongoTemplate.count(query_count, "review");
-//        OCPageResult pageResult = new OCPageResult();
-//        pageResult.setItems(infoReviews);
-//        pageResult.setTotal(reviewNum);
-//        pageResult.setTotalPage(reviewNum/limit);
         return infoReviews;
     }
 
