@@ -119,6 +119,42 @@ const getAvatar = (req, res) => {
   });
 };
 
+const getAvatarById = (req, res) => {
+  User.findById(req.params.user_id).then(function (user) {
+    if (!user) {
+      return res.sendStatus(401).send('The user does not exist.');
+    }
+    Image.find({user: user._id, type: 'avatar'})
+      .distinct('fileId')
+      .then(function (image) {
+        gfs.files.find({_id: {$in: image}}).toArray((err, files) => {
+          if (!files || files.length === 0) {
+            return res.json({
+              files: false,
+            });
+          }
+          files.map((file) => {
+            if (
+              file.contentType === 'image/jpeg' ||
+              file.contentType === 'image/png'
+            ) {
+              file.isImage = true;
+            } else {
+              file.isImage = false;
+            }
+          });
+          const imgObj = [];
+          for (file of files) {
+            if (file.isImage) {
+              imgObj.push(file);
+            }
+          }
+          return res.json({files: imgObj});
+        });
+      });
+  });
+};
+
 // get specific image by filename
 const getOneImage = (req, res) => {
   gfs.files.findOne({filename: req.params.filename}, (err, file) => {
@@ -167,4 +203,5 @@ module.exports = {
   getOneImage,
   deleteImage,
   getAvatar,
+  getAvatarById, 
 };

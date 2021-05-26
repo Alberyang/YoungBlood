@@ -54,21 +54,25 @@ export default function MomentCard(props) {
 
   let initialAvatar = (
     <Avatar aria-label="recipe" className={classes.avatar}>
-      {props.moment.username[0]}
+      {props.moment.username[0].toUpperCase()}
     </Avatar>
   );
 
   const [avatar, setAvatar] = React.useState(initialAvatar);
-  const getAvatar = async () => {
-    const response = await axios.get(`/avatar`);
+  const getAvatar = async (user_id) => {
+    const response = await axios.get(`/avatar/by_id/${user_id}`);
     return response;
   };
 
   React.useEffect(() => {
-    const response = getAvatar();
+    const response = getAvatar(props.moment.user);
     response.then((res) => {
-      let avatarName = res.data.files[res.data.files.length - 1].filename;
-      setAvatar(<Avatar alt="Nothing Here" src={'/api/image/' + avatarName} />);
+      if (res.data.files) {
+        let avatarName = res.data.files[res.data.files.length - 1].filename;
+        setAvatar(
+          <Avatar alt="Nothing Here" src={'/api/image/' + avatarName} />
+        );
+      }
     });
   }, []);
 

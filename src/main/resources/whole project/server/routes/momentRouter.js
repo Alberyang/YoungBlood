@@ -43,7 +43,7 @@ momentRouter.post('/comment/:moment_id', auth.optional, (req, res) => {
   momentController.createComment(req, res);
 });
 
-// like a comment
+// like a moment
 momentRouter.post('/like/:moment_id', auth.optional, (req, res) => {
   momentController.like(req, res);
 });

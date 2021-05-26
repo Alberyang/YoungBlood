@@ -82,9 +82,9 @@ export default function MomentCard(props) {
     </Avatar>
   );
 
-  const [avatar, setAvatar] = React.useState(initialAvatar);
-  const getAvatar = async () => {
-    const response = await axios.get(`/avatar`);
+  const [avatar, setAvatar] = React.useState(undefined);
+  const getAvatar = async (user_id) => {
+    const response = await axios.get(`/avatar/by_id/${user_id}`);
     return response;
   };
 
@@ -93,16 +93,15 @@ export default function MomentCard(props) {
   const [currentPage, setPage] = React.useState(1);
 
   React.useEffect(() => {
-    const response = getAvatar();
+    setAvatar(undefined);
+    const response = getAvatar(props.moment.user);
     response.then((res) => {
       if (res.data.files) {
         let avatarName = res.data.files[res.data.files.length - 1].filename;
-        setAvatar(
-          <Avatar alt="Nothing Here" src={'/api/image/' + avatarName} />
-        );
+        setAvatar(avatarName);
       }
     });
-  }, []);
+  }, [props.moment.user]);
 
   let likeBtn =
     props.moment.like.indexOf(props.user.user._id) === -1 ? (
@@ -308,7 +307,15 @@ export default function MomentCard(props) {
       <Card className={classes.root}>
         <CardHeader
           align="left"
-          avatar={avatar}
+          avatar={
+            avatar ? (
+              <Avatar alt="Nothing Here" src={'/api/image/' + avatar} />
+            ) : (
+              <Avatar aria-label="recipe" className={classes.avatar}>
+                {props.moment.username[0].toUpperCase()}
+              </Avatar>
+            )
+          }
           title={props.moment.username}
           subheader={dateFormat(
             'YYYY-mm-dd HH:MM:SS',

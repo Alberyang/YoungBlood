@@ -210,7 +210,7 @@ class Moment extends Component {
     const {classes} = this.props;
     let allView = this.generateView(undefined);
     let myView = this.generateView(this.props.user.user._id);
-    let officialView = this.generateView('606c453064ad461348e31a23');
+    let officialView = this.generateView('6078e9a0b3d8f82df8987f1e');
     let demoView;
     if (this.state.tabSelected === 0) {
       demoView = allView;

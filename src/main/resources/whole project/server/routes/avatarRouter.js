@@ -51,6 +51,10 @@ avatarRouter.get('/',auth.optional, (req,res)=>{
     imageController.getAvatar(req, res);
 });
 
+//get avatar by id :/
+avatarRouter.get('/by_id/:user_id',auth.optional, (req,res)=>{
+    imageController.getAvatarById(req, res);
+});
 
 
 
