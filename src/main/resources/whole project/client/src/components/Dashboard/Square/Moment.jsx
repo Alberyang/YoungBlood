@@ -88,9 +88,9 @@ class Moment extends Component {
 
   handleScroll = (e) => {
     if (
-      document.documentElement.scrollTop +
-        document.documentElement.clientHeight ===
-      document.documentElement.scrollHeight
+      Math.abs(document.documentElement.scrollTop +
+        document.documentElement.clientHeight -
+      document.documentElement.scrollHeight) < 2
     ) {
       const response = this.fetchMoments('False');
       response.then(
@@ -106,8 +106,13 @@ class Moment extends Component {
             });
             setTimeout(() => this.setState({snackbar: undefined}), 5 * 1000);
             if (this.state.moments) {
-              this.state.moments.push(...res.data.data);
+			  // Check duplicates.
+			  let original_idList = this.state.moments.map((item) => item.id);
+			  let new_refreshed_moments = res.data.data.filter((item) => {return original_idList.indexOf(item.id) === -1});
+              this.state.moments.push(...new_refreshed_moments);
               this.setState({moments: this.state.moments});
+			  
+			  
             } else {
               this.setState({moments: res.data.data});
             }
